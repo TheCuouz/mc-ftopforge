@@ -15,7 +15,25 @@ public class TopCache {
     private List<FactionSnapshot> sorted = Collections.emptyList();
     private Map<String, FactionSnapshot> byId = Collections.emptyMap();
 
+    // Snapshot of previous top (before last rebuild) for change detection (Discord events).
+    // Volatile read-only views — no lock needed for reads.
+    private volatile String prevTop1Id = null;
+    private volatile List<String> prevTop10Ids = Collections.emptyList();
+
+    public String previousTop1Id() { return prevTop1Id; }
+    public List<String> previousTop10Ids() { return prevTop10Ids; }
+
     public void rebuild(List<FactionSnapshot> snapshots) {
+        // Capture pre-rebuild snapshot for change detection (additive, no breaking changes).
+        // Use top(10) which takes the read lock — must be called BEFORE acquiring the write lock
+        // to avoid nested-lock deadlock.
+        List<FactionSnapshot> oldTop = top(10);
+        String oldTop1 = oldTop.isEmpty() ? null : oldTop.get(0).factionId();
+        List<String> oldTop10 = new ArrayList<>();
+        for (FactionSnapshot s : oldTop) oldTop10.add(s.factionId());
+        this.prevTop1Id = oldTop1;
+        this.prevTop10Ids = Collections.unmodifiableList(oldTop10);
+
         List<FactionSnapshot> copy = new ArrayList<>(snapshots);
         copy.sort(Comparator.comparingLong(FactionSnapshot::totalValue).reversed());
         Map<String, FactionSnapshot> idx = new HashMap<>();
