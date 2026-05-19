@@ -90,7 +90,7 @@ public class FTopForgePlugin extends JavaPlugin {
 
         recalcRunner.recoverStaleOnEnable();
 
-        getCommand("ftop").setExecutor(new FTopCommand(topCache, messages, cfg.getInt("options.factions-per-page", 10)));
+        getCommand("ftop").setExecutor(new FTopCommand(topCache, messages, cfg.getInt("options.factions-per-page", 10), null, "false"));
         getCommand("ftopforge").setExecutor(new FTopForgeCommand(this, recalcRunner, messages));
 
         long delaySeconds = cfg.getLong("options.ftop-recalculation-delay-seconds", 1800L);
