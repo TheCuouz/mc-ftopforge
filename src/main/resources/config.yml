@@ -1,21 +1,34 @@
+# =====================================================================
+# FTopForge - config.yml
+# =====================================================================
+# Cambia y aplica con `/ftopforge reload` (no requiere restart del server).
+# Las keys de mob/material en `items.yml` y `forensics.whitelist-blocks` usan
+# nombres Bukkit en formato UPPER_SNAKE_CASE (ej. IRON_GOLEM, DIAMOND_BLOCK).
+
+# Idioma de los mensajes (ver messages-es.yml / messages-en.yml).
 language: es                       # es | en
 
+# --- Calculo del top ---
+# Controla cómo el plugin recorre claims, balances, items y bloques de cada faction.
 options:
-  broadcast-when-starting-calculation: true
-  broadcast-when-stopping-calculation: true
-  factions-per-page: 10
-  chunks-calculated-per-second: 20
-  player-balances-calculated-per-second: 20
-  ftop-command-delay-seconds: 5
-  ftop-recalculation-delay-seconds: 1800
-  include-block-value-in-total-worth: true
-  include-spawner-value-in-total-worth: true
-  include-player-balance-in-total-worth: true
-  include-offline-balances: false   # parity with cracked: only sum online players' balances
-  include-item-worth-in-total-worth: true
-  prevent-ftop-usage-while-calculating: true
-  intercept-f-top-command: false   # /f top -> /ftop redirect
+  broadcast-when-starting-calculation: true   # anuncia en chat cuando arranca un recalculo
+  broadcast-when-stopping-calculation: true   # anuncia cuando termina (incluye duracion)
+  factions-per-page: 10                       # tamano de pagina del /ftop chat
+  chunks-calculated-per-second: 20            # throttle para no clavar el TPS escaneando claims
+  player-balances-calculated-per-second: 20   # throttle de balance lookups via Vault
+  ftop-command-delay-seconds: 5               # cooldown por player entre /ftop
+  ftop-recalculation-delay-seconds: 1800      # cada cuantos segundos se re-calcula auto (1800 = 30 min)
+  include-block-value-in-total-worth: true    # bloques en claim (ver items.yml#Blocks)
+  include-spawner-value-in-total-worth: true  # spawners en claim (ver items.yml#Spawners)
+  include-player-balance-in-total-worth: true # eco balances de miembros via Vault
+  include-offline-balances: false             # false = solo balances de online; parity con FactionsTop original
+  include-item-worth-in-total-worth: true     # items en cofres dentro del claim
+  prevent-ftop-usage-while-calculating: true  # bloquea /ftop durante el recalculo (evita inconsistencias)
+  intercept-f-top-command: false              # true = redirige `/f top` -> `/ftop` (si tu Factions ya lo provee, deja false)
 
+# --- Storage ---
+# Por defecto SQLite (zero-config). MySQL recomendado solo en redes BungeeCord
+# donde varios servers comparten un mismo top (ej. lobby + faction backend).
 storage:
   type: sqlite                     # sqlite | mysql
   mysql:
@@ -25,28 +38,34 @@ storage:
     user: root
     password: ''
     use-ssl: false
-    save-interval-seconds: 300
+    save-interval-seconds: 300     # cada cuantos segundos se persiste el top cache a MySQL
 
+# --- GUI ---
+# `/ftop gui` abre una vista grafica con paginacion + breakdown por faction.
 gui:
   enabled: true
-  use-gui-on-ftop: auto         # auto | true | false (auto = player→GUI, console→chat)
+  use-gui-on-ftop: auto            # auto | true | false. `auto` = player abre GUI, consola usa chat.
   top:
-    rows: 6                     # fixed; exposed for forward-compat only
-    filler: STAINED_GLASS_PANE-7   # legacy 1.8 name + data (7 = gray). Format: <MATERIAL>[-<dataValue>]
+    rows: 6                        # fijo a 6 (compatibilidad inventory size 9*6 = 54 slots)
+    filler: STAINED_GLASS_PANE-7   # bloque "filler" en los slots vacios. Formato <MATERIAL>[-<dataValue>] (data = 7 = gris).
   breakdown:
-    frame: STAINED_GLASS_PANE-9    # 9 = cyan
+    frame: STAINED_GLASS_PANE-9    # marco del breakdown GUI (data = 9 = cian)
     items:
-      chunks: GRASS              # legacy 1.8 name for "grass block"
-      spawners: MONSTER_EGG-50   # 50 = creeper
-      items: DIAMOND
-      blocks: BEACON
-      balance: GOLD_INGOT
+      chunks: GRASS                # icono para "Claims"
+      spawners: MONSTER_EGG-50     # icono para "Spawners" (data 50 = creeper egg)
+      items: DIAMOND               # icono para "Items en cofres"
+      blocks: BEACON               # icono para "Bloques en claim"
+      balance: GOLD_INGOT          # icono para "Balance de jugadores"
   skull-cache:
-    enabled: true
-    ttl-hours: 24
-    warmup-size: 200
-    async-fetch-concurrency: 4
+    enabled: true                  # cachea texturas de skin para los heads del top (reduce hits a Mojang)
+    ttl-hours: 24                  # cuantas horas dura una textura cacheada
+    warmup-size: 200               # cuantos heads se precachean en arranque
+    async-fetch-concurrency: 4     # threads paralelos para fetch de texturas Mojang
 
+# --- Holograms ---
+# Spawn un holograma con el top dinamico. Soporta DecentHolograms o HolographicDisplays.
+# Si tienes ambos cargados, `auto` prefiere DecentHolograms.
+# Para reubicar: edita las coords y `/ftopforge reload`.
 holograms:
   enabled: true
   location:
@@ -54,75 +73,95 @@ holograms:
     x: 100.5
     y: 80.5
     z: 100.5
-  refresh-interval-seconds: 60
+  refresh-interval-seconds: 60     # cada cuantos segundos se redibujan las lineas
   engine: auto                     # auto | decentholograms | holographicdisplays
-  format:
+  format:                          # formato de las lineas. Placeholders: %topN_name%, %topN_value%, %next_recalc%
     - "&6&l=== Top Facciones ==="
     - "&e#1 &b%top1_name% &7- &6$%top1_value%"
     - "&e#2 &b%top2_name% &7- &6$%top2_value%"
     - "&e#3 &b%top3_name% &7- &6$%top3_value%"
     - "&7Proximo recalculo: &f%next_recalc%"
 
+# --- Discord ---
+# Envia embeds a un webhook cuando ocurren eventos del top.
+# Setup: en Discord, server settings > Integrations > Webhooks > New Webhook,
+# copia la URL y pegala en `webhook-url`. Setear `enabled: true` para activar.
 discord:
   enabled: false
-  webhook-url: ''
+  webhook-url: ''                  # ej. https://discord.com/api/webhooks/123.../abc...
   embed:
-    color: '#FFD700'
-    thumbnail-url: ''
-    footer: 'Tiamat Network - FTopForge'
-  cooldown-hours:
+    color: '#FFD700'               # color del embed (hex)
+    thumbnail-url: ''              # URL de una imagen pequena que aparece a la derecha del embed
+    footer: 'FTopForge'            # texto al pie del embed
+  cooldown-hours:                  # tiempo minimo entre eventos del mismo tipo (anti-spam)
     on-recalc-finished: 0
-    on-top1-changed: 6
+    on-top1-changed: 6             # 6h entre notificaciones de cambio de rey
     on-top10-shuffle: 6
     on-weekly-reset: 0
-  events:
-    on-recalc-finished: false
-    on-top1-changed: true
-    on-top10-shuffle: false
-    on-weekly-reset: true
-  mention-role-id-on-king-change: ''
+  events:                          # que eventos disparan webhook
+    on-recalc-finished: false      # cada recalculo. Desactivado por defecto (ruido).
+    on-top1-changed: true          # cambio de #1 (recomendado)
+    on-top10-shuffle: false        # cualquier reordenacion del top 10. Cuidado: spammy.
+    on-weekly-reset: true          # cuando se cobran rewards (cierre de temporada)
+  mention-role-id-on-king-change: ''  # role ID a mencionar cuando cambia el rey (ej. '123456789012345678')
 
+# --- History ---
+# Guarda snapshots del top en SQLite/MySQL para `/ftopforge history <faction>`.
 history:
   enabled: true
-  retention-days: 90
-  cleanup-on-recalc: true
+  retention-days: 90               # cuantos dias de historia se conservan
+  cleanup-on-recalc: true          # purga registros viejos al final de cada recalculo
 
+# --- Forensics ---
+# Loggea quien coloca/rompe bloques de alto valor en claims (auditoria anti-insider).
 forensics:
   enabled: true
   whitelist-blocks: [BEACON, HOPPER, DISPENSER, DROPPER, MOB_SPAWNER, CHEST, TRAPPED_CHEST,
                      DIAMOND_BLOCK, EMERALD_BLOCK, GOLD_BLOCK, IRON_BLOCK, COAL_BLOCK]
-  log-non-members-only: false
+  log-non-members-only: false      # true = solo log de no-miembros (raiders); false = todos los eventos
   retention-days: 30
-  max-rows-per-chunk: 10000
-  flush-interval-seconds: 5
-  flush-batch-size: 100
+  max-rows-per-chunk: 10000        # limite duro de eventos por chunk (anti-DB-bloat)
+  flush-interval-seconds: 5        # cada cuanto se vuelcan eventos pending a DB
+  flush-batch-size: 100            # tamano del batch INSERT
 
+# --- Rewards ---
+# Payout semanal a las facciones top. Los comandos se ejecutan desde consola.
+# Placeholders disponibles en comandos: %faction_name%, %faction_leader_name%, %faction_value%.
+# El broadcast post-payout usa el template `messages.yml#rewards.payout-broadcast`.
 rewards:
   enabled: true
   schedule:
     day-of-week: MONDAY            # MONDAY..SUNDAY
     hour: 0
     minute: 0
-    timezone: system               # system | Europe/Madrid | etc
-  freeze-during-payout: true
-  broadcast: true
+    timezone: system               # system | UTC | Europe/Madrid | America/Argentina/Buenos_Aires
+  freeze-during-payout: true       # pausa el recalculo durante el payout para que la top sea estable
+  broadcast: true                  # broadcast usa template `messages.yml#rewards.payout-broadcast`
   ranks:
     '1':
       commands:
-        - "eco give %faction_leader_name% 1000000"
+        - "eco give %faction_leader_name% 5000000"
+        - "give %faction_leader_name% beacon 1"
+        - "give %faction_leader_name% golden_apple 64"
         - "give %faction_leader_name% diamond_block 64"
-        - "broadcast &6&l%faction_name% conquisto la semana con $%faction_value%!"
     '2':
       commands:
-        - "eco give %faction_leader_name% 500000"
-        - "give %faction_leader_name% diamond_block 32"
+        - "eco give %faction_leader_name% 2000000"
+        - "give %faction_leader_name% golden_apple 32"
+        - "give %faction_leader_name% diamond_block 64"
     '3':
       commands:
-        - "eco give %faction_leader_name% 250000"
-        - "give %faction_leader_name% diamond_block 16"
+        - "eco give %faction_leader_name% 750000"
+        - "give %faction_leader_name% golden_apple 16"
+        - "give %faction_leader_name% diamond_block 32"
 
+# --- PlaceholderAPI ---
+# Registra placeholders %ftopforge_top1_name%, %ftopforge_top1_value%, %ftopforge_my_rank%, etc.
 papi:
   enabled: true
 
+# --- bStats ---
+# Metricas anonimas de uso (https://bstats.org/plugin/bukkit/FTopForge).
+# Se pueden desactivar globalmente en plugins/bStats/config.yml.
 bstats:
   enabled: true

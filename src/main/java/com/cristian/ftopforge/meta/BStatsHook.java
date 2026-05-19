@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.function.IntSupplier;
 
 public final class BStatsHook {
-    private static final int PLUGIN_ID = 0;  // placeholder hasta registro en bstats.org
+    private static final int PLUGIN_ID = 31455;  // https://bstats.org/plugin/bukkit/FTopForge/31455
 
     private Metrics metrics;
 

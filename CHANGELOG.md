@@ -2,6 +2,25 @@
 
 All notable changes to FTopForge are documented here.
 
+## [1.2.2] - 2026-05-20 — Config polish + items.yml key fix + bStats registered
+
+### Fixed
+- **Silent value miss en `items.yml`:** las keys de `Spawners` y `Blocks` usaban CamelCase (`IronGolem`, `DiamondBlock`) que tras `key.toUpperCase()` no matcheaban con `EntityType.name()` / `Material.name()` (que usan `UPPER_SNAKE_CASE`: `IRON_GOLEM`, `DIAMOND_BLOCK`). El plugin no validaba ni warneaba — devolvía `0` para esos lookups. Heredado del baseline cracked v5.x. Afectaba a IRON_GOLEM, MAGMA_CUBE, MUSHROOM_COW, PIG_ZOMBIE (1.8-1.15), WITHER_SKELETON, y todos los bloques compound de items.yml#Blocks (DIAMOND_BLOCK, EMERALD_BLOCK, etc.).
+- Reescritas keys a UPPER_SNAKE_CASE en items.yml shipped + comentarios explicando la regla. Añadidos ZOMBIFIED_PIGLIN, WITHER_SKELETON, CAVE_SPIDER, GUARDIAN, ENDERMITE, LAPIS_BLOCK, BEACON.
+
+### Changed
+- **bStats `PLUGIN_ID`:** `0` placeholder (DEC-041) → **`31455`** (registrado en https://bstats.org/plugin/bukkit/FTopForge/31455).
+- **`items.yml` baseline paid:** spawners endgame uplifted (IRON_GOLEM 1M→2.5M, SILVERFISH 1.5M→1.8M, +WITHER_SKELETON 1.5M, +GUARDIAN 600k), mob farms planas (COW 50k→25k, OCELOT 10k→15k), mid-tier mantenido. Bloques mid-tier subidos (DIAMOND_BLOCK 1700→2500, IRON_BLOCK 1200→1500, +LAPIS_BLOCK 300, +BEACON 50000).
+- **`config.yml` rewards baseline paid:** rank 1 1M+64 diamond_block → **5M + 1 beacon + 64 golden_apple + 64 diamond_block**; rank 2 500k+32db → **2M + 32 golden_apple + 64 diamond_block**; rank 3 250k+16db → **750k + 16 golden_apple + 32 diamond_block**. Removido el `broadcast` inline del rank 1 (redundante con `rewards.broadcast: true` que usa el template `messages.yml#rewards.payout-broadcast`).
+- **`config.yml` polish para downloaders:** sección-level + key-level comments en español, ejemplos de webhook URL Discord, ejemplos de timezone IANA (UTC, Europe/Madrid, America/Argentina/Buenos_Aires), nota explicativa del schema UPPER_SNAKE_CASE.
+
+### Notes
+- `BStatsHook.PLUGIN_ID` constante hardcoded → cualquier server con el jar 1.2.2 reportará a la página oficial. Fork/recompile requerido para cambiar destino.
+- Live config FACTIONS sincronizado con shipped richer schema (gui.top.filler, gui.breakdown.frame+items, gui.skull-cache.{warmup-size,async-fetch-concurrency}, discord.cooldown-hours). El plugin ya leía estas keys con defaults — la sincronización solo expone los toggles a operadores.
+
+### Deploy
+- Sesión 14 (Tiamat regular). Backup `_migracion/backups/2026-05-20_FACTIONS_pre_session14/`.
+
 ## [1.2.1] - 2026-05-19 — Hotfix: Messages.resolve flat-first lookup
 
 ### Fixed

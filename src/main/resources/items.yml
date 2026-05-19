@@ -1,5 +1,16 @@
+# FTopForge - items.yml
+# Valores monetarios usados por el calculo de /ftop. Edita y luego /ftopforge reload.
+#
+# IMPORTANTE: las keys de `Spawners` y `Blocks` deben matchear `EntityType.name()`
+# y `Material.name()` en formato UPPER_SNAKE_CASE (ej. IRON_GOLEM, DIAMOND_BLOCK).
+# Si pones IronGolem o DiamondBlock se ignoran silenciosamente (devuelven 0).
+
+# --- Apples (single key) ---
 GodApple: 5000
 GoldenApple: 20
+
+# --- Armor + tools ---
+# Key compuesta {metal}_{piece} -> DIAMOND_SWORD, IRON_HELMET, GOLD_PICKAXE, etc.
 Diamond:
   Helmet: 250
   ChestPlate: 350
@@ -30,43 +41,61 @@ Gold:
   Sword: 175
   Shovel: 60
   Hoe: 30
+
+# --- Spawners ---
+# Tunning baseline paid: spawners endgame (IronGolem, WitherSkeleton, Silverfish) subidos
+# para encarecer war factions; mob farms planas baratas; mid-tier (Blaze, Creeper, Enderman) mantenidos.
 Spawners:
-  Bat: 10000
-  Blaze: 350000
-  Chicken: 5000
-  Cow: 50000
-  Creeper: 500000
-  Enderman: 200000
-  Ghast: 20000
-  Giant: 10000
-  Horse: 100000
-  IronGolem: 1000000
-  MagmaCube: 10000
-  MushroomCow: 100000
-  Ocelot: 10000
-  Pig: 10000
-  Pigman: 750000
-  Rabbit: 10000
-  Sheep: 10000
-  Skeleton: 70000
-  Snowman: 10000
-  SilverFish: 1500000
-  Slime: 10000
-  Spider: 45000
-  Squid: 10000
-  Villager: 120000
-  Witch: 15000
-  Wolf: 10000
-  Zombie: 70000
+  BAT: 5000
+  BLAZE: 750000
+  CAVE_SPIDER: 250000
+  CHICKEN: 5000
+  COW: 25000
+  CREEPER: 600000
+  ENDERMAN: 350000
+  ENDERMITE: 50000
+  GHAST: 500000
+  GIANT: 10000
+  GUARDIAN: 600000
+  HORSE: 50000
+  IRON_GOLEM: 2500000
+  MAGMA_CUBE: 50000
+  MUSHROOM_COW: 100000
+  OCELOT: 15000
+  PIG: 10000
+  PIG_ZOMBIE: 1000000              # 1.8-1.15. En 1.16+ Mojang lo renombro a ZOMBIFIED_PIGLIN.
+  ZOMBIFIED_PIGLIN: 1000000        # 1.16+. Mismo valor que PIG_ZOMBIE para mantener parity cross-version.
+  RABBIT: 10000
+  SHEEP: 10000
+  SILVERFISH: 1800000
+  SKELETON: 200000
+  SLIME: 75000
+  SNOWMAN: 10000                   # Snow Golem en 1.16+.
+  SPIDER: 100000
+  SQUID: 10000
+  VILLAGER: 400000
+  WITCH: 80000
+  WITHER_SKELETON: 1500000         # EntityType propio desde 1.11. En 1.8-1.10 era variant de SKELETON sin entry.
+  WOLF: 15000
+  ZOMBIE: 150000
+
+# --- Mob drops especiales ---
 MobDrops:
   EnderDragonEgg: 15000000
+
+# --- Bloques en claims ---
+# Tunning: levantar bloques mid-tier para premiar bases con material caro.
+# BEACON cuenta como block (50k flex). Hoppers/dispensers/droppers/spawners-as-block
+# se rigen por `forensics.whitelist-blocks` en config.yml para logs (no value).
 Blocks:
-  DiamondBlock: 1700
-  EmeraldBlock: 2000
-  GoldBlock: 500
-  IronBlock: 1200
-  CoalBlock: 300
-  RedstoneBlock: 450
-  Bedrock: 1000
-  TnT: 20
-  Obsidian: 10
+  DIAMOND_BLOCK: 2500
+  EMERALD_BLOCK: 2200
+  GOLD_BLOCK: 800
+  IRON_BLOCK: 1500
+  COAL_BLOCK: 200
+  REDSTONE_BLOCK: 400
+  LAPIS_BLOCK: 300
+  BEDROCK: 1500
+  TNT: 25
+  OBSIDIAN: 15
+  BEACON: 50000
