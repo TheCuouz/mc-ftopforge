@@ -24,6 +24,16 @@ public enum Dialect {
                     "calculated_at BIGINT NOT NULL, " +
                     "recalc_id INTEGER)";
         }
+        @Override public String skullCacheDdl() {
+            return "CREATE TABLE IF NOT EXISTS ftf_skull_cache (" +
+                    "uuid TEXT PRIMARY KEY, " +
+                    "profile_property_value TEXT NOT NULL, " +
+                    "fetched_at BIGINT NOT NULL)";
+        }
+        @Override public String skullCacheIndexDdl() {
+            return "CREATE INDEX IF NOT EXISTS idx_ftf_skull_cache_fetched_at " +
+                    "ON ftf_skull_cache(fetched_at)";
+        }
     },
     MYSQL {
         @Override public String recalcsDdl() {
@@ -48,10 +58,23 @@ public enum Dialect {
                     "calculated_at BIGINT NOT NULL, " +
                     "recalc_id INT UNSIGNED) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
         }
+        @Override public String skullCacheDdl() {
+            return "CREATE TABLE IF NOT EXISTS ftf_skull_cache (" +
+                    "uuid VARCHAR(36) PRIMARY KEY, " +
+                    "profile_property_value TEXT NOT NULL, " +
+                    "fetched_at BIGINT NOT NULL, " +
+                    "INDEX idx_ftf_skull_cache_fetched_at (fetched_at)" +
+                    ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
+        }
+        @Override public String skullCacheIndexDdl() {
+            return ""; // MySQL has INDEX inline in the CREATE TABLE above
+        }
     };
 
     public abstract String recalcsDdl();
     public abstract String snapshotsCurrentDdl();
+    public abstract String skullCacheDdl();
+    public abstract String skullCacheIndexDdl();
 
     public static Dialect byName(String name) {
         if (name == null) throw new IllegalArgumentException("storage.type is null");
