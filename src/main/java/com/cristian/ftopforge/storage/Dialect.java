@@ -131,11 +131,11 @@ public enum Dialect {
         }
         @Override public String historyDdl() {
             return "CREATE TABLE IF NOT EXISTS ftf_history (" +
-                    "recalc_id BIGINT NOT NULL, " +
+                    "recalc_id INT UNSIGNED NOT NULL, " +
                     "finished_at BIGINT NOT NULL, " +
                     "faction_id VARCHAR(64) NOT NULL, " +
                     "faction_name VARCHAR(64) NOT NULL, " +
-                    "rank INT NOT NULL, " +
+                    "`rank` INT NOT NULL, " +
                     "total_worth BIGINT NOT NULL, " +
                     "chunks_value BIGINT NOT NULL, " +
                     "spawners_value BIGINT NOT NULL, " +
