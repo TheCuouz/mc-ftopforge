@@ -1,0 +1,36 @@
+name: FTopForge
+version: ${project.version}
+main: com.cristian.ftopforge.FTopForgePlugin
+api-version: 1.13
+author: ttsstudio
+description: Factions ranking with bells and whistles (internal Tiamat custom)
+load: POSTWORLD
+depend: [Factions, Vault]
+softdepend: [PlaceholderAPI, DecentHolograms, HolographicDisplays]
+
+commands:
+  ftop:
+    description: Show the top factions ranking
+    aliases: [ft]
+    usage: /ftop [page|gui]
+  ftopforge:
+    description: FTopForge admin and utility commands
+    aliases: []
+    usage: /ftopforge <worth|history|forensics|recalc|rewards|reload|version> [args...]
+
+permissions:
+  ftopforge.use:
+    description: Allow basic /ftop usage
+    default: true
+  ftopforge.worth.others:
+    description: View worth of any faction (not just your own)
+    default: op
+  ftopforge.history:
+    description: View history charts and export CSV
+    default: op
+  ftopforge.forensics:
+    description: View forensics insider log
+    default: op
+  ftopforge.admin:
+    description: Reload, recalc, rewards trigger, version
+    default: op

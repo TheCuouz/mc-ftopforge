@@ -1,0 +1,72 @@
+GodApple: 5000
+GoldenApple: 20
+Diamond:
+  Helmet: 250
+  ChestPlate: 350
+  Leggings: 350
+  Boots: 250
+  Pickaxe: 300
+  Axe: 300
+  Sword: 500
+  Shovel: 200
+  Hoe: 100
+Iron:
+  Helmet: 200
+  ChestPlate: 300
+  Leggings: 300
+  Boots: 200
+  Pickaxe: 200
+  Axe: 200
+  Sword: 375
+  Shovel: 125
+  Hoe: 75
+Gold:
+  Helmet: 125
+  ChestPlate: 200
+  Leggings: 200
+  Boots: 125
+  Pickaxe: 100
+  Axe: 100
+  Sword: 175
+  Shovel: 60
+  Hoe: 30
+Spawners:
+  Bat: 10000
+  Blaze: 350000
+  Chicken: 5000
+  Cow: 50000
+  Creeper: 500000
+  Enderman: 200000
+  Ghast: 20000
+  Giant: 10000
+  Horse: 100000
+  IronGolem: 1000000
+  MagmaCube: 10000
+  MushroomCow: 100000
+  Ocelot: 10000
+  Pig: 10000
+  Pigman: 750000
+  Rabbit: 10000
+  Sheep: 10000
+  Skeleton: 70000
+  Snowman: 10000
+  SilverFish: 1500000
+  Slime: 10000
+  Spider: 45000
+  Squid: 10000
+  Villager: 120000
+  Witch: 15000
+  Wolf: 10000
+  Zombie: 70000
+MobDrops:
+  EnderDragonEgg: 15000000
+Blocks:
+  DiamondBlock: 1700
+  EmeraldBlock: 2000
+  GoldBlock: 500
+  IronBlock: 1200
+  CoalBlock: 300
+  RedstoneBlock: 450
+  Bedrock: 1000
+  TnT: 20
+  Obsidian: 10

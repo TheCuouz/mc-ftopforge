@@ -1,0 +1,109 @@
+language: es                       # es | en
+
+options:
+  broadcast-when-starting-calculation: true
+  broadcast-when-stopping-calculation: true
+  factions-per-page: 10
+  chunks-calculated-per-second: 20
+  player-balances-calculated-per-second: 20
+  ftop-command-delay-seconds: 5
+  ftop-recalculation-delay-seconds: 1800
+  include-block-value-in-total-worth: true
+  include-spawner-value-in-total-worth: true
+  include-player-balance-in-total-worth: true
+  include-offline-balances: false   # parity with cracked: only sum online players' balances
+  include-item-worth-in-total-worth: true
+  prevent-ftop-usage-while-calculating: true
+  intercept-f-top-command: false   # /f top -> /ftop redirect
+
+storage:
+  type: sqlite                     # sqlite | mysql
+  mysql:
+    host: 127.0.0.1
+    port: 3306
+    database: ftopforge
+    user: root
+    password: ''
+    use-ssl: false
+    save-interval-seconds: 300
+
+gui:
+  enabled: true
+  use-gui-on-ftop: false           # /ftop opens chat by default; GUI via /ftop gui
+  rows: 6
+  skull-cache-hours: 24
+
+holograms:
+  enabled: true
+  location:
+    world: world
+    x: 100.5
+    y: 80.5
+    z: 100.5
+  refresh-interval-seconds: 60
+  engine: auto                     # auto | decentholograms | holographicdisplays
+  format:
+    - "&6&l=== Top Facciones ==="
+    - "&e#1 &b%top1_name% &7- &6$%top1_value%"
+    - "&e#2 &b%top2_name% &7- &6$%top2_value%"
+    - "&e#3 &b%top3_name% &7- &6$%top3_value%"
+    - "&7Proximo recalculo: &f%next_recalc%"
+
+discord:
+  enabled: false
+  webhook-url: ''
+  events:
+    on-recalc-finished: false
+    on-top1-changed: true
+    on-top10-shuffle: false
+    on-weekly-reset: true
+  embed:
+    color: '#FFD700'
+    thumbnail-url: ''
+    footer: 'Tiamat Network - FTopForge'
+  mention-role-id-on-king-change: ''
+
+history:
+  enabled: true
+  retention-days: 90
+  cleanup-on-recalc: true
+
+forensics:
+  enabled: true
+  whitelist-blocks: [BEACON, HOPPER, DISPENSER, DROPPER, MOB_SPAWNER, CHEST, TRAPPED_CHEST,
+                     DIAMOND_BLOCK, EMERALD_BLOCK, GOLD_BLOCK, IRON_BLOCK, COAL_BLOCK]
+  log-non-members-only: false
+  retention-days: 30
+  max-rows-per-chunk: 10000
+  flush-interval-seconds: 5
+  flush-batch-size: 100
+
+rewards:
+  enabled: true
+  schedule:
+    day-of-week: MONDAY            # MONDAY..SUNDAY
+    hour: 0
+    minute: 0
+    timezone: system               # system | Europe/Madrid | etc
+  freeze-during-payout: true
+  broadcast: true
+  ranks:
+    '1':
+      commands:
+        - "eco give %faction_leader_name% 1000000"
+        - "give %faction_leader_name% diamond_block 64"
+        - "broadcast &6&l%faction_name% conquisto la semana con $%faction_value%!"
+    '2':
+      commands:
+        - "eco give %faction_leader_name% 500000"
+        - "give %faction_leader_name% diamond_block 32"
+    '3':
+      commands:
+        - "eco give %faction_leader_name% 250000"
+        - "give %faction_leader_name% diamond_block 16"
+
+papi:
+  enabled: true
+
+bstats:
+  enabled: true
