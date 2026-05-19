@@ -50,4 +50,34 @@ class DialectTest {
         assertTrue(Dialect.MYSQL.skullCacheIndexDdl().contains("idx_ftf_skull_cache_fetched_at") ||
                    Dialect.MYSQL.skullCacheDdl().contains("INDEX idx_ftf_skull_cache_fetched_at"));
     }
+
+    @Test
+    void sqlite_historyDdl_hasCompositePkAndIndexes() {
+        String ddl = Dialect.SQLITE.historyDdl();
+        assertTrue(ddl.contains("CREATE TABLE IF NOT EXISTS ftf_history"));
+        assertTrue(ddl.contains("recalc_id"));
+        assertTrue(ddl.contains("PRIMARY KEY (recalc_id, faction_id)"));
+        assertTrue(Dialect.SQLITE.historyIndexesDdl().stream()
+            .anyMatch(s -> s.contains("idx_ftf_history_finished")));
+        assertTrue(Dialect.SQLITE.historyIndexesDdl().stream()
+            .anyMatch(s -> s.contains("idx_ftf_history_faction")));
+    }
+
+    @Test
+    void sqlite_forensicsDdl_hasAutoincrementAndIndexes() {
+        String ddl = Dialect.SQLITE.forensicsDdl();
+        assertTrue(ddl.contains("CREATE TABLE IF NOT EXISTS ftf_forensics"));
+        assertTrue(ddl.contains("INTEGER PRIMARY KEY AUTOINCREMENT"));
+        assertTrue(Dialect.SQLITE.forensicsIndexesDdl().size() >= 3);
+    }
+
+    @Test
+    void both_dialects_haveSeasonsAndMetaDdl() {
+        assertTrue(Dialect.SQLITE.seasonsDdl().contains("ftf_seasons"));
+        assertTrue(Dialect.MYSQL.seasonsDdl().contains("ftf_seasons"));
+        assertTrue(Dialect.SQLITE.metaDdl().contains("ftf_meta"));
+        assertTrue(Dialect.MYSQL.metaDdl().contains("ftf_meta"));
+        assertTrue(Dialect.SQLITE.metaDdl().contains("meta_key"));
+        assertTrue(Dialect.SQLITE.metaDdl().contains("meta_value"));
+    }
 }

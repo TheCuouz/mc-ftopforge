@@ -1,9 +1,13 @@
 package com.cristian.ftopforge.hooks;
 
+import com.massivecraft.factions.Board;
 import com.massivecraft.factions.Factions;
 import com.massivecraft.factions.Faction;
 import com.massivecraft.factions.FLocation;
+import com.massivecraft.factions.FPlayer;
+import com.massivecraft.factions.FPlayers;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,5 +62,32 @@ public class FactionsUUIDHook {
             try { out.add(UUID.fromString(fp.getId())); } catch (Exception ignored) {}
         });
         return out;
+    }
+
+    /** Returns the faction id at (world, chunkX, chunkZ), or null for wilderness/missing. */
+    public String factionIdAt(World world, int chunkX, int chunkZ) {
+        if (world == null) return null;
+        try {
+            FLocation floc = new FLocation(world.getName(), chunkX, chunkZ);
+            Faction f = Board.getInstance().getFactionAt(floc);
+            if (f == null || f.isWilderness()) return null;
+            return f.getId();
+        } catch (Throwable t) {
+            return null;
+        }
+    }
+
+    /** Returns the faction id of the given player UUID, or null if none/wilderness. */
+    public String factionIdOf(UUID playerUuid) {
+        if (playerUuid == null) return null;
+        try {
+            FPlayer fp = FPlayers.getInstance().getById(playerUuid.toString());
+            if (fp == null) return null;
+            Faction f = fp.getFaction();
+            if (f == null || f.isWilderness()) return null;
+            return f.getId();
+        } catch (Throwable t) {
+            return null;
+        }
     }
 }
