@@ -64,4 +64,37 @@ public class TopCache {
         lock.readLock().lock();
         try { return sorted.size(); } finally { lock.readLock().unlock(); }
     }
+
+    public List<FactionSnapshot> topRange(int fromInclusive, int toExclusive) {
+        lock.readLock().lock();
+        try {
+            int size = sorted.size();
+            int from = Math.max(0, fromInclusive);
+            int to = Math.min(size, toExclusive);
+            if (from >= to) return Collections.emptyList();
+            return Collections.unmodifiableList(new ArrayList<>(sorted.subList(from, to)));
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
+
+    public AvgBreakdown averagesTop10() {
+        lock.readLock().lock();
+        try {
+            int n = Math.min(10, sorted.size());
+            if (n == 0) return AvgBreakdown.empty();
+            long c = 0, sp = 0, it = 0, bl = 0, ba = 0;
+            for (int i = 0; i < n; i++) {
+                FactionSnapshot s = sorted.get(i);
+                c += s.chunksValue();
+                sp += s.spawnersValue();
+                it += s.itemsValue();
+                bl += s.blocksValue();
+                ba += s.balanceValue();
+            }
+            return new AvgBreakdown(c / n, sp / n, it / n, bl / n, ba / n);
+        } finally {
+            lock.readLock().unlock();
+        }
+    }
 }
