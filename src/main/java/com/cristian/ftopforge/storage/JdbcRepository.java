@@ -25,6 +25,11 @@ public class JdbcRepository {
         return ds.getConnection();
     }
 
+    /** Expose the pooled DataSource for modules that bring their own DAOs (history, forensics, seasons, meta). */
+    public DataSource getDataSource() {
+        return ds;
+    }
+
     public Dialect dialect() {
         return dialect;
     }

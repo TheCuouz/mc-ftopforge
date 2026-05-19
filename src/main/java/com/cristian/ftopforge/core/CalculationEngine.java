@@ -34,6 +34,7 @@ public class CalculationEngine {
     private final int balancesPerSec;
 
     private final AtomicBoolean running = new AtomicBoolean(false);
+    private final AtomicBoolean frozen = new AtomicBoolean(false);
 
     public CalculationEngine(JavaPlugin plugin, FactionsUUIDHook factions, ChunkValuator chunkValuator,
                              BalanceAggregator balances, int chunksPerSec, int balancesPerSec) {
@@ -47,8 +48,13 @@ public class CalculationEngine {
 
     public boolean isRunning() { return running.get(); }
 
+    /** When frozen, tryStart returns false (used during weekly payout to avoid stale snapshots mid-write). */
+    public void setFrozen(boolean f) { frozen.set(f); }
+    public boolean isFrozen() { return frozen.get(); }
+
     /** Kick off one recalc. onDone is called on the main thread with the list of snapshots. */
     public boolean tryStart(Consumer<List<FactionSnapshot>> onDone) {
+        if (frozen.get()) return false;
         if (!running.compareAndSet(false, true)) return false;
 
         // 1. Build the work queue on the main thread (Factions API isn't thread-safe).

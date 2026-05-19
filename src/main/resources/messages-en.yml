@@ -22,9 +22,46 @@ command:
     pending-info: '&7Pending rewards: &f%count%'
 errors:
   no-permission: '&cNo permission'
-  faction-not-found: '&cFaction not found: &f%faction%'
+  faction-not-found: '&cFaction not found: &f%name%'
   recalc-in-progress: '%prefix%&7Recalculation in progress, please wait'
   must-be-player: '&cOnly players can use this command'
+  not-enough-args: '&cUsage: &f%usage%'
+
+holograms:
+  disabled-no-engine: '&7[FTopForge] holograms enabled but no supported engine found; module disabled.'
+  disabled-invalid-location: '&7[FTopForge] holograms.location is invalid; module disabled.'
+
+discord:
+  cooldown-skipped: '&7[FTopForge] webhook %event% on cooldown; skipped.'
+  webhook-failed: '&c[FTopForge] webhook POST failed (status %status%); event dropped.'
+
+history:
+  title: '&6&l=== %faction% — last %weeks% weeks ==='
+  empty: '&7No history to show for &b%faction%&7.'
+  export-success: '&aExported: &f%path%'
+  export-failed: '&cExport failed: &f%reason%'
+  ascii-footer: '&7Peak: &e%peak% &7· Min: &e%min% &7· Δ: %delta_color%%delta%'
+
+forensics:
+  no-events: '&7No forensic events for &b%faction%&7.'
+  event-line: '&7[%ts%] &e[%action%] &b%material% &7@ &f%world% %x%,%y%,%z% &7— &f%player%%insider_tag%'
+  insider-tag: ' &c(insider)'
+  paginated-footer: '&7Page %page%/%total%. &e/ftopforge forensics %faction% %nextPage%&7 for more.'
+
+rewards:
+  next-payout: '&eNext payout: &6%weekday% %time% &7— in &b%countdown%'
+  payout-broadcast: '&6&l[Tiamat] &e%faction% &7conquered the week with &6$%value%&7!'
+  catch-up-warn: '&c[FTopForge] catch-up payout after downtime (last: %last%, missed by %missed%)'
+  history-line: '&7#%season% &7| &f%date% &7| top1: &b%faction% &7| rewards: &e%payouts%'
+  manual-trigger: '&c[FTopForge] manual payout triggered by %admin%'
+
+worth:
+  title: '&6&l[FTopForge] &eWorth of &b%material%%type_suffix% &7× &f%amount%'
+  unit-line: '&7  · Unit: &6$%unit%'
+  total-line: '&7  · Total: &6&l$%total%'
+  not-listed: '&c  · No price configured in items.yml'
+  no-target: '&cHold an item or look at a block with a configured price.'
+  console-only: '&cThis command is only available to players.'
 admin:
   reloaded: '%prefix%&aConfig + messages reloaded'
   recalc-triggered: '%prefix%&aManual recalculation triggered'

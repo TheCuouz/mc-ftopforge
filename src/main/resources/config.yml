@@ -66,15 +66,20 @@ holograms:
 discord:
   enabled: false
   webhook-url: ''
+  embed:
+    color: '#FFD700'
+    thumbnail-url: ''
+    footer: 'Tiamat Network - FTopForge'
+  cooldown-hours:
+    on-recalc-finished: 0
+    on-top1-changed: 6
+    on-top10-shuffle: 6
+    on-weekly-reset: 0
   events:
     on-recalc-finished: false
     on-top1-changed: true
     on-top10-shuffle: false
     on-weekly-reset: true
-  embed:
-    color: '#FFD700'
-    thumbnail-url: ''
-    footer: 'Tiamat Network - FTopForge'
   mention-role-id-on-king-change: ''
 
 history:

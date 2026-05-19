@@ -22,9 +22,46 @@ command:
     pending-info: '&7Premios pendientes: &f%count%'
 errors:
   no-permission: '&cSin permiso'
-  faction-not-found: '&cFacción no encontrada: &f%faction%'
+  faction-not-found: '&cFacción no encontrada: &f%name%'
   recalc-in-progress: '%prefix%&7Recálculo en curso, espera al final'
   must-be-player: '&cEste comando solo puede usarlo un player'
+  not-enough-args: '&cUso: &f%usage%'
+
+holograms:
+  disabled-no-engine: '&7[FTopForge] holograms enabled pero ningún engine soportado encontrado; módulo deshabilitado.'
+  disabled-invalid-location: '&7[FTopForge] holograms.location inválida; módulo deshabilitado.'
+
+discord:
+  cooldown-skipped: '&7[FTopForge] webhook %event% en cooldown; skip.'
+  webhook-failed: '&c[FTopForge] webhook POST falló (status %status%); evento descartado.'
+
+history:
+  title: '&6&l=== %faction% — últimas %weeks% semanas ==='
+  empty: '&7Sin historia para mostrar para &b%faction%&7.'
+  export-success: '&aExportado: &f%path%'
+  export-failed: '&cExport falló: &f%reason%'
+  ascii-footer: '&7Pico: &e%peak% &7· Min: &e%min% &7· Δ: %delta_color%%delta%'
+
+forensics:
+  no-events: '&7Sin eventos forenses para &b%faction%&7.'
+  event-line: '&7[%ts%] &e[%action%] &b%material% &7@ &f%world% %x%,%y%,%z% &7— &f%player%%insider_tag%'
+  insider-tag: ' &c(insider)'
+  paginated-footer: '&7Página %page%/%total%. &e/ftopforge forensics %faction% %nextPage%&7 para más.'
+
+rewards:
+  next-payout: '&eProximo payout: &6%weekday% %time% &7— en &b%countdown%'
+  payout-broadcast: '&6&l[Tiamat] &e%faction% &7conquisto la semana con &6$%value%&7!'
+  catch-up-warn: '&c[FTopForge] catch-up payout tras downtime (last: %last%, missed by %missed%)'
+  history-line: '&7#%season% &7| &f%date% &7| top1: &b%faction% &7| premios: &e%payouts%'
+  manual-trigger: '&c[FTopForge] payout manual disparado por %admin%'
+
+worth:
+  title: '&6&l[FTopForge] &eWorth de &b%material%%type_suffix% &7× &f%amount%'
+  unit-line: '&7  · Unit: &6$%unit%'
+  total-line: '&7  · Total: &6&l$%total%'
+  not-listed: '&c  · Sin precio configurado en items.yml'
+  no-target: '&cSostené un ítem o apuntá a un bloque con precio configurado.'
+  console-only: '&cEste comando solo está disponible para jugadores.'
 admin:
   reloaded: '%prefix%&aConfig + messages recargados'
   recalc-triggered: '%prefix%&aRecálculo manual disparado'
