@@ -29,9 +29,23 @@ storage:
 
 gui:
   enabled: true
-  use-gui-on-ftop: false           # /ftop opens chat by default; GUI via /ftop gui
-  rows: 6
-  skull-cache-hours: 24
+  use-gui-on-ftop: auto         # auto | true | false (auto = player→GUI, console→chat)
+  top:
+    rows: 6                     # fixed; exposed for forward-compat only
+    filler: STAINED_GLASS_PANE-7   # legacy 1.8 name + data (7 = gray). Format: <MATERIAL>[-<dataValue>]
+  breakdown:
+    frame: STAINED_GLASS_PANE-9    # 9 = cyan
+    items:
+      chunks: GRASS              # legacy 1.8 name for "grass block"
+      spawners: MONSTER_EGG-50   # 50 = creeper
+      items: DIAMOND
+      blocks: BEACON
+      balance: GOLD_INGOT
+  skull-cache:
+    enabled: true
+    ttl-hours: 24
+    warmup-size: 200
+    async-fetch-concurrency: 4
 
 holograms:
   enabled: true
