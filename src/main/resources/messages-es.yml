@@ -29,3 +29,53 @@ admin:
   reloaded: '%prefix%&aConfig + messages recargados'
   recalc-triggered: '%prefix%&aRecálculo manual disparado'
   rewards-triggered: '%prefix%&aReset semanal manual ejecutado'
+gui:
+  top:
+    title: '&6&lTop Facciones &7(página %page%/%total%)'
+    skull:
+      name: '&b#%rank% &f%faction_name%'
+      lore_leader: '&7Líder: &f%leader_name%'
+      lore_value: '&7Valor: &6$%formatted_value%'
+      lore_action: '&eClick izq &7→ ver desglose'
+    info:
+      name: '&6FTopForge'
+      lore_last: '&7Último recálculo: &f%relative_time%'
+      lore_next: '&7Próximo en: &e%countdown%'
+      lore_total: '&7Total facciones: &f%total%'
+      lore_no_data: '&7Sin datos. Recalc en &e%countdown%'
+    nav:
+      prev: '&a&l← Página anterior'
+      next: '&a&lPágina siguiente →'
+      close: '&c&l✖ Cerrar'
+    empty: '%prefix%&7Aún no hay ranking. Espera al primer recálculo.'
+    relative:
+      never: 'nunca'
+      recalculating: 'recalculando ahora…'
+  breakdown:
+    title: '&6&l%faction%'
+    summary:
+      name: '&b%faction_name%'
+      lore_rank: '&7Rank: &6#%rank%'
+      lore_leader: '&7Líder: &f%leader_name%'
+      lore_members: '&7Miembros: &f%member_count%'
+      lore_total: '&7Valor total: &6$%total_value%'
+      lore_snapshot: '&8Snapshot: %relative_time%'
+    cat:
+      chunks:
+        name: '&eChunks reclamados'
+      spawners:
+        name: '&eSpawners'
+      items:
+        name: '&eItems en cofres'
+      blocks:
+        name: '&eBloques valiosos'
+      balance:
+        name: '&eBalance miembros'
+    cat_lore:
+      value: '&7Valor: &6$%value%'
+      pct: '&7Porcentaje: &f%pct%%'
+      avg: '&7Media top 10: &f$%avg%'
+      delta: '&7vs media: %delta_color%%delta_sign%%delta_pct%%'
+    back: '&a&l← Volver al top'
+    close: '&c&l✖ Cerrar'
+    not_in_ranking: '%prefix%&cLa facción ya no está en el ranking.'
