@@ -11,6 +11,10 @@ public final class Banner {
     private Banner() {}
 
     public static void print(JavaPlugin plugin, String storageType) {
+        print(plugin, storageType, null);
+    }
+
+    public static void print(JavaPlugin plugin, String storageType, String modulesLine) {
         try (InputStream in = plugin.getResource("banner.txt")) {
             if (in == null) {
                 plugin.getLogger().info("FTopForge v" + plugin.getDescription().getVersion() + " by ttsstudio");
@@ -20,6 +24,9 @@ public final class Banner {
                 String line;
                 while ((line = br.readLine()) != null) {
                     String resolved = line.replace("${storage_type}", storageType);
+                    if (modulesLine != null) {
+                        resolved = resolved.replace("${modules}", modulesLine);
+                    }
                     plugin.getLogger().info(resolved);
                 }
             }
