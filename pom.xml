@@ -71,6 +71,18 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- DecentHolograms (soft-dep, compile-only) via JitPack.
+         NOTE: HolographicDisplays support was dropped in 1.2.0-RC1 because the
+         HD artifact does not resolve from JitPack (filoghost-dev returns 401
+         for v-prefixed tags, and the un-prefixed tag has no published jar).
+         FACTIONS production uses DH 2.8.4 — DH is the only engine in practice. -->
+    <dependency>
+      <groupId>com.github.DecentSoftware-eu</groupId>
+      <artifactId>DecentHolograms</artifactId>
+      <version>2.8.4</version>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- HikariCP 4.0.3 (last Java 8 compatible version) - shaded -->
     <dependency>
       <groupId>com.zaxxer</groupId>
