@@ -1,0 +1,31 @@
+prefix: '&6[&eFTop&6] '
+calculation:
+  starting: '%prefix%&7Calculating factions...'
+  finished: '%prefix%&aRecalculation finished in &f%duration%s'
+command:
+  ftop:
+    line: '&6%rank%. &b%faction_name% &a$%value%'
+    header: '&4&l&m-----&e&lPage &c&l%page%&4&l&m-----'
+    delay: '%prefix%&cWait %seconds%s before using /ftop again'
+  worth:
+    self: '&aYour faction is worth &6$%value%'
+    other: '&aFaction %faction% is worth &6$%value%'
+    no-faction: '&cYou are not in a faction'
+  history:
+    chart: '%prefix%&e%faction% &7(last 30 recalculations)\n&f%chart%'
+    csv-exported: '%prefix%&aCSV exported to &f%path%'
+  forensics:
+    line: '&e%ts% &b%player% &7%action% &f%block% &7at (%world% %cx%, %cz%)'
+    empty: '%prefix%&7No records for that faction'
+  rewards:
+    paid: '&6&lWeekly top! &e#%rank% &b%faction_name% &7-> &6$%value%'
+    pending-info: '&7Pending rewards: &f%count%'
+errors:
+  no-permission: '&cNo permission'
+  faction-not-found: '&cFaction not found: &f%faction%'
+  recalc-in-progress: '%prefix%&7Recalculation in progress, please wait'
+  must-be-player: '&cOnly players can use this command'
+admin:
+  reloaded: '%prefix%&aConfig + messages reloaded'
+  recalc-triggered: '%prefix%&aManual recalculation triggered'
+  rewards-triggered: '%prefix%&aWeekly reset manually executed'

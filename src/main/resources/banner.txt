@@ -1,0 +1,7 @@
+==============================================
+  FTopForge v${project.version}          by ttsstudio
+  Factions ranking with bells and whistles
+  factions: FactionsUUID 1.6.x  storage: ${storage_type}
+  modules: GUI | Holo | Discord | History |
+           Forensics | Rewards | PAPI
+==============================================

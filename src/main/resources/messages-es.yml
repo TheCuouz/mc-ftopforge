@@ -1,0 +1,31 @@
+prefix: '&6[&eFTop&6] '
+calculation:
+  starting: '%prefix%&7Calculando facciones...'
+  finished: '%prefix%&aRecálculo terminado en &f%duration%s'
+command:
+  ftop:
+    line: '&6%rank%. &b%faction_name% &a$%value%'
+    header: '&4&l&m-----&e&lPágina &c&l%page%&4&l&m-----'
+    delay: '%prefix%&cEspera %seconds%s antes de usar /ftop'
+  worth:
+    self: '&aTu facción vale &6$%value%'
+    other: '&aLa facción %faction% vale &6$%value%'
+    no-faction: '&cNo perteneces a ninguna facción'
+  history:
+    chart: '%prefix%&e%faction% &7(últimos 30 recálculos)\n&f%chart%'
+    csv-exported: '%prefix%&aCSV exportado a &f%path%'
+  forensics:
+    line: '&e%ts% &b%player% &7%action% &f%block% &7en (%world% %cx%, %cz%)'
+    empty: '%prefix%&7Sin registros para esa facción'
+  rewards:
+    paid: '&6&l¡Top semanal! &e#%rank% &b%faction_name% &7→ &6$%value%'
+    pending-info: '&7Premios pendientes: &f%count%'
+errors:
+  no-permission: '&cSin permiso'
+  faction-not-found: '&cFacción no encontrada: &f%faction%'
+  recalc-in-progress: '%prefix%&7Recálculo en curso, espera al final'
+  must-be-player: '&cEste comando solo puede usarlo un player'
+admin:
+  reloaded: '%prefix%&aConfig + messages recargados'
+  recalc-triggered: '%prefix%&aRecálculo manual disparado'
+  rewards-triggered: '%prefix%&aReset semanal manual ejecutado'
