@@ -2,6 +2,20 @@
 
 All notable changes to FTopForge are documented here.
 
+## [1.2.1] - 2026-05-19 — Hotfix: Messages.resolve flat-first lookup
+
+### Fixed
+- **Critical:** `Messages.resolve` returned `<missing:KEY>` for every nested key in production. `MessagesLoader.loadOne` loads YAML via `YamlConfiguration.getValues(true)` which produces a flat map with dot-path keys + `ConfigurationSection` refs at branch nodes — NOT nested HashMaps as the resolver expected. Latent since Bundle A (v1.1.0); surfaced post-Custom 9 when the user opened `/ftop` with an empty top and saw `<missing:gui.top.empty>` in the action bar. All `gui.*`, `breakdown.*`, and the new Custom 9 nested keys were affected.
+- Pre-existing unit tests passed because `MessagesTest` used a private `toNestedMap(yaml)` helper that converted to true nested HashMaps, masking the production code path.
+
+### Added
+- Regression test `resolvesNestedKey_whenLoadedViaYamlGetValuesTrue_productionPath` that exercises the exact production path (`yaml.getValues(true)`) and asserts `gui.top.empty` + `gui.top.title` resolve.
+- 150 → 151 tests, 0 failures.
+
+### Notes
+- Pre-fix workaround: replaced `messages-es.yml` and `messages-en.yml` on production (they were stale Custom 7 baseline files preserved by `saveDefaultConfig` across Bundle A and Custom 9 deploys). Originals backed up.
+- DEC-043 added documenting the flat-first lookup pattern.
+
 ## [1.2.0] - 2026-05-19 — Bundles B+C+D + Polish (Custom 9 / Sesión 12)
 
 ### Added
