@@ -1,6 +1,7 @@
 package com.cristian.ftopforge;
 
 import com.cristian.ftopforge.hooks.FactionsUUIDHook;
+import com.cristian.ftopforge.hooks.VaultHook;
 import com.cristian.ftopforge.i18n.Messages;
 import com.cristian.ftopforge.i18n.MessagesLoader;
 import com.cristian.ftopforge.util.Banner;
@@ -12,6 +13,7 @@ public class FTopForgePlugin extends JavaPlugin {
 
     private Messages messages;
     private FactionsUUIDHook factionsHook;
+    private VaultHook vaultHook;
 
     @Override
     public void onEnable() {
@@ -28,6 +30,15 @@ public class FTopForgePlugin extends JavaPlugin {
             getLogger().info("FactionsUUID hook OK");
         } catch (IllegalStateException e) {
             getLogger().severe("FactionsUUID hook failed: " + e.getMessage());
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
+
+        try {
+            this.vaultHook = VaultHook.initOrFail();
+            getLogger().info("Vault hook OK");
+        } catch (IllegalStateException e) {
+            getLogger().severe("Vault hook failed: " + e.getMessage());
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
