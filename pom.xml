@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -6,7 +6,7 @@
 
   <groupId>com.cristian</groupId>
   <artifactId>ftopforge</artifactId>
-  <version>1.2.0-RC1</version>
+  <version>1.2.0</version>
   <packaging>jar</packaging>
 
   <name>FTopForge</name>
@@ -75,7 +75,7 @@
          NOTE: HolographicDisplays support was dropped in 1.2.0-RC1 because the
          HD artifact does not resolve from JitPack (filoghost-dev returns 401
          for v-prefixed tags, and the un-prefixed tag has no published jar).
-         FACTIONS production uses DH 2.8.4 — DH is the only engine in practice. -->
+         FACTIONS production uses DH 2.8.4 â€” DH is the only engine in practice. -->
     <dependency>
       <groupId>com.github.DecentSoftware-eu</groupId>
       <artifactId>DecentHolograms</artifactId>

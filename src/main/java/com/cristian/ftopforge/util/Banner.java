@@ -25,7 +25,7 @@ public final class Banner {
                 while ((line = br.readLine()) != null) {
                     String resolved = line.replace("${storage_type}", storageType);
                     if (modulesLine != null) {
-                        resolved = resolved.replace("${modules}", modulesLine);
+                        resolved = resolved.replace("${ftf.modules}", modulesLine);
                     }
                     plugin.getLogger().info(resolved);
                 }
