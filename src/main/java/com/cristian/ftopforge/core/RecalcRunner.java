@@ -18,10 +18,21 @@ public class RecalcRunner {
     private final TopCache cache;
     private final boolean broadcastStart, broadcastFinish;
     private final String startMsg, finishMsgTemplate;
+    private final long recalcDelayMs; // interval between recalcs in ms
+
+    // State for GUI polling
+    private volatile boolean running = false;
+    private volatile long lastFinishedMs = 0L;
 
     public RecalcRunner(JavaPlugin plugin, CalculationEngine engine, JdbcRepository repo, TopCache cache,
                         boolean broadcastStart, boolean broadcastFinish,
                         String startMsg, String finishMsgTemplate) {
+        this(plugin, engine, repo, cache, broadcastStart, broadcastFinish, startMsg, finishMsgTemplate, 1800L);
+    }
+
+    public RecalcRunner(JavaPlugin plugin, CalculationEngine engine, JdbcRepository repo, TopCache cache,
+                        boolean broadcastStart, boolean broadcastFinish,
+                        String startMsg, String finishMsgTemplate, long recalcDelaySeconds) {
         this.plugin = plugin;
         this.engine = engine;
         this.recalcDao = new RecalcDao(repo);
@@ -31,18 +42,36 @@ public class RecalcRunner {
         this.broadcastFinish = broadcastFinish;
         this.startMsg = startMsg;
         this.finishMsgTemplate = finishMsgTemplate;
+        this.recalcDelayMs = recalcDelaySeconds * 1000L;
+    }
+
+    // --- GUI-facing state getters ---
+
+    /** True while a recalc is currently in progress. */
+    public boolean isRunning() { return running; }
+
+    /** System.currentTimeMillis() when the last recalc completed, or 0 if never. */
+    public long lastFinishedAt() { return lastFinishedMs; }
+
+    /** Estimated time when the next recalc will run.
+     *  Returns lastFinishedMs + delay, or 0 if a recalc has never completed. */
+    public long nextScheduledAt() {
+        if (lastFinishedMs <= 0) return 0L;
+        return lastFinishedMs + recalcDelayMs;
     }
 
     /** Returns false if a recalc is already running (caller should warn). */
     public boolean trigger() {
         if (engine.isRunning()) return false;
 
+        running = true;
         long startedNanos = System.nanoTime();
         long recalcId;
         try {
             recalcId = recalcDao.startNew();
         } catch (SQLException e) {
             plugin.getLogger().severe("Could not insert ftf_recalcs row: " + e.getMessage());
+            running = false;
             return false;
         }
 
@@ -66,7 +95,10 @@ public class RecalcRunner {
                 Bukkit.broadcastMessage(finishMsgTemplate.replace("%duration%", String.valueOf(ms / 1000L)));
             }
             plugin.getLogger().info("[recalc] done id=" + recalcId + " factions=" + snapshots.size() + " ms=" + ms);
+            lastFinishedMs = System.currentTimeMillis();
+            running = false;
         });
+        if (!ok) running = false;
         return ok;
     }
 
