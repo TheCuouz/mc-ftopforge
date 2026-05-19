@@ -11,6 +11,11 @@ import java.util.List;
 
 public class RecalcRunner {
 
+    /** Callback invocado al final de cada recalc exitoso (en hilo principal). */
+    public interface FinishCallback {
+        void onFinish(long recalcId, long finishedAt, java.util.List<FactionSnapshot> orderedTop);
+    }
+
     private final JavaPlugin plugin;
     private final CalculationEngine engine;
     private final RecalcDao recalcDao;
@@ -19,6 +24,9 @@ public class RecalcRunner {
     private final boolean broadcastStart, broadcastFinish;
     private final String startMsg, finishMsgTemplate;
     private final long recalcDelayMs; // interval between recalcs in ms
+
+    private final java.util.List<FinishCallback> finishCallbacks =
+        new java.util.concurrent.CopyOnWriteArrayList<>();
 
     // State for GUI polling
     private volatile boolean running = false;
@@ -60,6 +68,11 @@ public class RecalcRunner {
         return lastFinishedMs + recalcDelayMs;
     }
 
+    /** Registra un callback que se invocará tras cada recalc exitoso (en hilo principal). */
+    public void onFinish(FinishCallback cb) {
+        if (cb != null) finishCallbacks.add(cb);
+    }
+
     /** Returns false if a recalc is already running (caller should warn). */
     public boolean trigger() {
         if (engine.isRunning()) return false;
@@ -96,6 +109,12 @@ public class RecalcRunner {
             }
             plugin.getLogger().info("[recalc] done id=" + recalcId + " factions=" + snapshots.size() + " ms=" + ms);
             lastFinishedMs = System.currentTimeMillis();
+            for (FinishCallback cb : finishCallbacks) {
+                try { cb.onFinish(recalcId, lastFinishedMs, snapshots); }
+                catch (Throwable t) {
+                    plugin.getLogger().log(java.util.logging.Level.WARNING, "[recalc] onFinish callback failed", t);
+                }
+            }
             running = false;
         });
         if (!ok) running = false;
