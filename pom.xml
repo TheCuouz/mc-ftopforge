@@ -6,7 +6,7 @@
 
   <groupId>com.cristian</groupId>
   <artifactId>ftopforge</artifactId>
-  <version>1.2.0</version>
+  <version>1.2.1</version>
   <packaging>jar</packaging>
 
   <name>FTopForge</name>

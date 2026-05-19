@@ -146,4 +146,24 @@ class MessagesTest {
         Messages m = loadFromYaml("es");
         assertNotEquals("<missing:errors.must-be-player>", m.get("errors.must-be-player"));
     }
+
+    @Test
+    void resolvesNestedKey_whenLoadedViaYamlGetValuesTrue_productionPath() throws Exception {
+        // Regression test for the Bundle A → 1.2.0 bug:
+        // MessagesLoader loads YAML via yaml.getValues(true), which produces a flat map
+        // with dot-path keys + ConfigurationSection refs. The unit-test toNestedMap helper
+        // disguised the bug. This test exercises the REAL production code path.
+        java.io.InputStream in = MessagesTest.class.getClassLoader().getResourceAsStream("messages-es.yml");
+        org.bukkit.configuration.file.YamlConfiguration yaml = new org.bukkit.configuration.file.YamlConfiguration();
+        yaml.load(new java.io.InputStreamReader(in, java.nio.charset.StandardCharsets.UTF_8));
+        java.util.Map<String, Object> primary = yaml.getValues(true);
+        Messages m = new Messages(primary, primary);
+        // gui.top.empty must resolve (it's the action bar message on /ftop with empty top)
+        String empty = m.get("gui.top.empty");
+        assertFalse(empty.startsWith("<missing:"), "gui.top.empty should NOT be missing, got: " + empty);
+        assertTrue(empty.contains("ranking") || empty.contains("recálculo"), "should have meaningful content, got: " + empty);
+        // gui.top.title is another nested key that must work
+        String title = m.get("gui.top.title", "page", "1", "total", "1");
+        assertFalse(title.startsWith("<missing:"), "gui.top.title should NOT be missing, got: " + title);
+    }
 }

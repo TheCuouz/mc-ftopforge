@@ -38,6 +38,12 @@ public class Messages {
     @SuppressWarnings("unchecked")
     private String resolve(Map<String, Object> root, String dottedKey) {
         if (root == null) return null;
+        // Flat lookup first — works when the map came from YamlConfiguration.getValues(true),
+        // which includes dot-path keys as direct entries alongside the ConfigurationSection refs.
+        Object direct = root.get(dottedKey);
+        if (direct instanceof String) return (String) direct;
+        // Nested fallback — works when the map is a plain HashMap with nested HashMaps
+        // (e.g. unit tests using toNestedMap helper, or hand-built maps).
         String[] parts = dottedKey.split("\\.");
         Object cur = root;
         for (String p : parts) {
