@@ -15,9 +15,10 @@ public final class BreakdownMath {
     public static Delta delta(long value, long avg) {
         if (avg <= 0) return new Delta(0, '=', "&7");
         long diff = value - avg;
-        long absPct = (Math.abs(diff) * 100) / avg;
-        if (diff > 0) return new Delta((int) absPct, '+', "&a");
-        if (diff < 0) return new Delta((int) absPct, '-', "&c");
+        // Use double intermediate to avoid overflow when diff is very large.
+        int absPct = (int) Math.min(((double) Math.abs(diff) / avg) * 100, Integer.MAX_VALUE);
+        if (diff > 0) return new Delta(absPct, '+', "&a");
+        if (diff < 0) return new Delta(absPct, '-', "&c");
         return new Delta(0, '=', "&7");
     }
 

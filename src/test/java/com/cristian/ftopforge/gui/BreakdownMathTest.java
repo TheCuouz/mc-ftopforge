@@ -22,6 +22,11 @@ class BreakdownMathTest {
     }
 
     @Test
+    void pctOf_negativeComponent_returnsZero() {
+        assertEquals(0, BreakdownMath.pctOf(-500, 1000));
+    }
+
+    @Test
     void delta_avgZero_returnsZeroNeutral() {
         BreakdownMath.Delta d = BreakdownMath.delta(500, 0);
         assertEquals(0, d.pct);
