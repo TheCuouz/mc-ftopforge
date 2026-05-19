@@ -109,6 +109,14 @@
       <version>3.42.0.0</version>
     </dependency>
 
+    <!-- bStats (shaded + relocated) -->
+    <dependency>
+      <groupId>org.bstats</groupId>
+      <artifactId>bstats-bukkit</artifactId>
+      <version>3.0.2</version>
+      <scope>compile</scope>
+    </dependency>
+
     <!-- JUnit for pure-logic tests -->
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -166,6 +174,10 @@
                 <relocation>
                   <pattern>org.slf4j</pattern>
                   <shadedPattern>com.cristian.ftopforge.libs.slf4j</shadedPattern>
+                </relocation>
+                <relocation>
+                  <pattern>org.bstats</pattern>
+                  <shadedPattern>com.cristian.ftopforge.libs.bstats</shadedPattern>
                 </relocation>
                 <!-- DO NOT relocate org.sqlite - native libs hardcode the package -->
               </relocations>
