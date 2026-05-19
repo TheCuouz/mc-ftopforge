@@ -1,14 +1,17 @@
 package com.cristian.ftopforge;
 
+import com.cristian.ftopforge.hooks.FactionsUUIDHook;
 import com.cristian.ftopforge.i18n.Messages;
 import com.cristian.ftopforge.i18n.MessagesLoader;
 import com.cristian.ftopforge.util.Banner;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class FTopForgePlugin extends JavaPlugin {
 
     private Messages messages;
+    private FactionsUUIDHook factionsHook;
 
     @Override
     public void onEnable() {
@@ -19,6 +22,15 @@ public class FTopForgePlugin extends JavaPlugin {
 
         Banner.print(this, storageType);
         this.messages = MessagesLoader.load(this, lang);
+
+        try {
+            this.factionsHook = FactionsUUIDHook.initOrFail();
+            getLogger().info("FactionsUUID hook OK");
+        } catch (IllegalStateException e) {
+            getLogger().severe("FactionsUUID hook failed: " + e.getMessage());
+            Bukkit.getPluginManager().disablePlugin(this);
+            return;
+        }
 
         getLogger().info("Loaded messages (lang=" + lang + ", storage=" + storageType + ")");
         getLogger().info("FTopForge enabled (banner-only; hooks + engine wired in later tasks)");
