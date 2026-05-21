@@ -144,8 +144,37 @@ public final class HologramSubcommand {
         ((org.bukkit.entity.Player) s).teleport(loc);
         s.sendMessage(msg.get("hologram.tp-success"));
     }
-    private void handleDisable(CommandSender s, String[] args) { s.sendMessage(msg.get("hologram.usage")); }
-    private void handleEnable(CommandSender s, String[] args)  { s.sendMessage(msg.get("hologram.usage")); }
+    private void handleEnable(CommandSender s, String[] args) {
+        org.bukkit.configuration.file.FileConfiguration cfg = plugin.getConfig();
+        if (cfg.getBoolean("holograms.enabled", true) && plugin.holograms() != null && plugin.holograms().isRunning()) {
+            s.sendMessage(msg.get("hologram.enable-already"));
+            return;
+        }
+        boolean wasFirstBackup = !new java.io.File(plugin.getDataFolder(), "config.yml.bak").exists();
+        boolean ok = writer.writeEnabled(true);
+        if (!ok) { s.sendMessage(msg.get("hologram.config-write-failed")); return; }
+        if (wasFirstBackup) s.sendMessage(msg.get("hologram.config-backup"));
+        plugin.shutdownHolograms();
+        plugin.bootstrapHolograms();
+        if (plugin.holograms() == null) {
+            s.sendMessage(msg.get("hologram.enable-no-engine"));
+            return;
+        }
+        s.sendMessage(msg.get("hologram.enable-success"));
+    }
+    private void handleDisable(CommandSender s, String[] args) {
+        org.bukkit.configuration.file.FileConfiguration cfg = plugin.getConfig();
+        if (!cfg.getBoolean("holograms.enabled", true) && (plugin.holograms() == null || !plugin.holograms().isRunning())) {
+            s.sendMessage(msg.get("hologram.disable-already"));
+            return;
+        }
+        boolean wasFirstBackup = !new java.io.File(plugin.getDataFolder(), "config.yml.bak").exists();
+        boolean ok = writer.writeEnabled(false);
+        if (!ok) { s.sendMessage(msg.get("hologram.config-write-failed")); return; }
+        if (wasFirstBackup) s.sendMessage(msg.get("hologram.config-backup"));
+        plugin.shutdownHolograms();
+        s.sendMessage(msg.get("hologram.disable-success"));
+    }
     private void handleRefresh(CommandSender s, String[] args) {
         com.cristian.ftopforge.holograms.HologramService svc = plugin.holograms();
         if (svc == null || !svc.isRunning()) {
