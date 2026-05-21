@@ -59,4 +59,35 @@ class HologramSubcommandParsingTest {
         boolean found = cap.getAllValues().stream().anyMatch(v -> v.equals("hologram.set-no-player"));
         org.junit.jupiter.api.Assertions.assertTrue(found);
     }
+
+    @Test
+    void move_tooFewArgs_sendsBadCoords() {
+        CommandSender s = mock(CommandSender.class);
+        HologramSubcommand sub = new HologramSubcommand(null, stubMessages(), null);
+
+        sub.handle(s, new String[] { "hologram", "move", "world", "1" });
+
+        ArgumentCaptor<String> cap = ArgumentCaptor.forClass(String.class);
+        verify(s, atLeastOnce()).sendMessage(cap.capture());
+        org.junit.jupiter.api.Assertions.assertTrue(
+            cap.getAllValues().stream().anyMatch(v -> v.equals("hologram.move-bad-coords")));
+    }
+
+    @Test
+    void move_badDouble_sendsBadCoords() {
+        CommandSender s = mock(CommandSender.class);
+        // Mock Bukkit to return null for any world lookup (simulates missing world in unit test env).
+        try (org.mockito.MockedStatic<org.bukkit.Bukkit> bukkit = Mockito.mockStatic(org.bukkit.Bukkit.class)) {
+            bukkit.when(() -> org.bukkit.Bukkit.getWorld(Mockito.anyString())).thenReturn(null);
+            HologramSubcommand sub = new HologramSubcommand(null, stubMessages(), null);
+
+            sub.handle(s, new String[] { "hologram", "move", "nonexistent_world", "x", "y", "z" });
+
+            ArgumentCaptor<String> cap = ArgumentCaptor.forClass(String.class);
+            verify(s, atLeastOnce()).sendMessage(cap.capture());
+            // Bukkit.getWorld returns null → move-bad-world.
+            org.junit.jupiter.api.Assertions.assertTrue(
+                cap.getAllValues().stream().anyMatch(v -> v.equals("hologram.move-bad-world")));
+        }
+    }
 }

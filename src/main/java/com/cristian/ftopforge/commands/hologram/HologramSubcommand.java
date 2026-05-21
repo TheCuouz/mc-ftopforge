@@ -60,7 +60,39 @@ public final class HologramSubcommand {
             "y", String.format(java.util.Locale.US, "%.1f", loc.getY()),
             "z", String.format(java.util.Locale.US, "%.1f", loc.getZ())));
     }
-    private void handleMove(CommandSender s, String[] args)    { s.sendMessage(msg.get("hologram.usage")); }
+    private void handleMove(CommandSender s, String[] args) {
+        // expected: args[0]=hologram args[1]=move args[2..5]=world x y z
+        if (args.length < 6) {
+            s.sendMessage(msg.get("hologram.move-bad-coords"));
+            return;
+        }
+        String wname = args[2];
+        if (org.bukkit.Bukkit.getWorld(wname) == null) {
+            s.sendMessage(msg.get("hologram.move-bad-world", "world", wname));
+            return;
+        }
+        double x, y, z;
+        try {
+            x = Double.parseDouble(args[3]);
+            y = Double.parseDouble(args[4]);
+            z = Double.parseDouble(args[5]);
+        } catch (NumberFormatException e) {
+            s.sendMessage(msg.get("hologram.move-bad-coords"));
+            return;
+        }
+        boolean wasFirstBackup = !new java.io.File(plugin.getDataFolder(), "config.yml.bak").exists();
+        boolean ok = writer.writeLocation(wname, x, y, z);
+        if (!ok) { s.sendMessage(msg.get("hologram.config-write-failed")); return; }
+        if (wasFirstBackup) s.sendMessage(msg.get("hologram.config-backup"));
+        plugin.shutdownHolograms();
+        plugin.bootstrapHolograms();
+        if (plugin.holograms() == null) s.sendMessage(msg.get("hologram.set-no-engine"));
+        s.sendMessage(msg.get("hologram.set-success",
+            "world", wname,
+            "x", String.format(java.util.Locale.US, "%.1f", x),
+            "y", String.format(java.util.Locale.US, "%.1f", y),
+            "z", String.format(java.util.Locale.US, "%.1f", z)));
+    }
     private void handleInfo(CommandSender s, String[] args) {
         org.bukkit.configuration.file.FileConfiguration cfg = plugin.getConfig();
         com.cristian.ftopforge.holograms.HologramService svc = plugin.holograms();
