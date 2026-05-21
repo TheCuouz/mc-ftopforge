@@ -427,6 +427,11 @@ public class FTopForgePlugin extends JavaPlugin {
                 cfg.getInt("options.factions-per-page", 10), guiManager, guiFlag));
         getCommand("ftopforge").setExecutor(new FTopForgeCommand(this, recalcRunner, messages));
 
+        com.cristian.ftopforge.commands.FTopForgeTabCompleter tabber =
+            new com.cristian.ftopforge.commands.FTopForgeTabCompleter(this);
+        getCommand("ftop").setTabCompleter(tabber);
+        getCommand("ftopforge").setTabCompleter(tabber);
+
         long ticks = Math.max(20L, delaySeconds * 20L);
         this.recalcTaskId = Bukkit.getScheduler().runTaskTimer(this, new Runnable() {
             @Override public void run() { recalcRunner.trigger(); }
