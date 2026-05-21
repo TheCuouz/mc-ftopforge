@@ -16,7 +16,7 @@ commands:
   ftopforge:
     description: FTopForge admin and utility commands
     aliases: []
-    usage: /ftopforge <worth|history|forensics|recalc|rewards|reload|version> [args...]
+    usage: /ftopforge <worth|history|forensics|recalc|rewards|reload|version|hologram> [args...]
 
 permissions:
   ftopforge.use:

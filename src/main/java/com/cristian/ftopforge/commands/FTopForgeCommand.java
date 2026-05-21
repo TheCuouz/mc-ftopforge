@@ -51,7 +51,7 @@ public class FTopForgeCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (args.length == 0) {
             sender.sendMessage(ChatColor.translateAlternateColorCodes('&',
-                "&7/ftopforge <worth|history|forensics|recalc|rewards|reload|version> [args]"));
+                "&7/ftopforge <worth|history|forensics|recalc|rewards|reload|version|hologram> [args]"));
             return true;
         }
         String sub = args[0].toLowerCase();
