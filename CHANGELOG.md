@@ -2,6 +2,20 @@
 
 All notable changes to FTopForge are documented here.
 
+## [1.2.3] - 2026-05-21 — Hologram in-game commands + reload rebuild
+
+### Added
+- (to be filled when implementation done)
+
+### Changed
+- (to be filled)
+
+### Fixed
+- (to be filled)
+
+### Deploy
+- (to be filled)
+
 ## [1.2.2] - 2026-05-20 — Config polish + items.yml key fix + bStats registered
 
 ### Fixed
