@@ -102,4 +102,22 @@ public final class HologramService {
         }
         return new Location(w, x, y, z);
     }
+
+    // --- Accessors added in 1.2.3 for /ftopforge hologram info/tp/refresh ---
+
+    /** Returns a defensive copy of the current location, or null if the service has none. */
+    public Location currentLocation() {
+        return location == null ? null : location.clone();
+    }
+
+    /** True iff the scheduler task is active. */
+    public boolean isRunning() {
+        return taskId != -1;
+    }
+
+    /** Forces an immediate engine.update with current rendered lines. No-op when stopped. */
+    public void forceRefresh() {
+        if (engine == null || taskId == -1) return;
+        engine.update(renderLines());
+    }
 }
