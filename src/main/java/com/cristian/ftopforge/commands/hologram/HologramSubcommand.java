@@ -38,7 +38,39 @@ public final class HologramSubcommand {
 
     private void handleSet(CommandSender s, String[] args)     { s.sendMessage(msg.get("hologram.usage")); }
     private void handleMove(CommandSender s, String[] args)    { s.sendMessage(msg.get("hologram.usage")); }
-    private void handleInfo(CommandSender s, String[] args)    { s.sendMessage(msg.get("hologram.usage")); }
+    private void handleInfo(CommandSender s, String[] args) {
+        org.bukkit.configuration.file.FileConfiguration cfg = plugin.getConfig();
+        com.cristian.ftopforge.holograms.HologramService svc = plugin.holograms();
+        boolean enabled = cfg.getBoolean("holograms.enabled", true);
+        s.sendMessage(msg.get("hologram.info-header"));
+
+        if (svc != null && svc.isRunning()) {
+            org.bukkit.Location loc = svc.currentLocation();
+            String wname = loc != null && loc.getWorld() != null ? loc.getWorld().getName() : cfg.getString("holograms.location.world", "world");
+            double x = loc != null ? loc.getX() : cfg.getDouble("holograms.location.x", 0d);
+            double y = loc != null ? loc.getY() : cfg.getDouble("holograms.location.y", 80d);
+            double z = loc != null ? loc.getZ() : cfg.getDouble("holograms.location.z", 0d);
+            s.sendMessage(msg.get("hologram.info-line-engine", "engine", plugin.runtimeState().holoEngineName != null ? plugin.runtimeState().holoEngineName : "—"));
+            s.sendMessage(msg.get("hologram.info-line-location",
+                "world", wname,
+                "x", String.format(java.util.Locale.US, "%.1f", x),
+                "y", String.format(java.util.Locale.US, "%.1f", y),
+                "z", String.format(java.util.Locale.US, "%.1f", z)));
+            s.sendMessage(msg.get("hologram.info-line-enabled", "state", String.valueOf(enabled)));
+            s.sendMessage(msg.get("hologram.info-line-refresh", "seconds", String.valueOf(cfg.getInt("holograms.refresh-interval-seconds", 60))));
+            java.util.List<String> tmpl = cfg.getStringList("holograms.format");
+            s.sendMessage(msg.get("hologram.info-line-lines", "count", String.valueOf(tmpl.size())));
+        } else {
+            s.sendMessage(msg.get("hologram.info-line-engine", "engine", "—"));
+            s.sendMessage(msg.get("hologram.info-line-location",
+                "world", cfg.getString("holograms.location.world", "world"),
+                "x", String.format(java.util.Locale.US, "%.1f", cfg.getDouble("holograms.location.x", 0d)),
+                "y", String.format(java.util.Locale.US, "%.1f", cfg.getDouble("holograms.location.y", 80d)),
+                "z", String.format(java.util.Locale.US, "%.1f", cfg.getDouble("holograms.location.z", 0d))));
+            s.sendMessage(msg.get("hologram.info-line-enabled", "state", String.valueOf(enabled)));
+            if (!enabled) s.sendMessage(msg.get("hologram.info-disabled"));
+        }
+    }
     private void handleTp(CommandSender s, String[] args)      { s.sendMessage(msg.get("hologram.usage")); }
     private void handleDisable(CommandSender s, String[] args) { s.sendMessage(msg.get("hologram.usage")); }
     private void handleEnable(CommandSender s, String[] args)  { s.sendMessage(msg.get("hologram.usage")); }
