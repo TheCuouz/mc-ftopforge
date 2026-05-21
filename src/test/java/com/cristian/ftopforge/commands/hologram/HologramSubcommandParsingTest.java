@@ -46,4 +46,17 @@ class HologramSubcommandParsingTest {
         boolean foundUsage = cap.getAllValues().stream().anyMatch(v -> v.equals("hologram.usage"));
         org.junit.jupiter.api.Assertions.assertTrue(foundUsage);
     }
+
+    @Test
+    void set_fromConsole_sendsNoPlayerError() {
+        org.bukkit.command.CommandSender s = mock(org.bukkit.command.CommandSender.class);
+        HologramSubcommand sub = new HologramSubcommand(null, stubMessages(), null);
+
+        sub.handle(s, new String[] { "hologram", "set" });
+
+        ArgumentCaptor<String> cap = ArgumentCaptor.forClass(String.class);
+        verify(s, atLeastOnce()).sendMessage(cap.capture());
+        boolean found = cap.getAllValues().stream().anyMatch(v -> v.equals("hologram.set-no-player"));
+        org.junit.jupiter.api.Assertions.assertTrue(found);
+    }
 }

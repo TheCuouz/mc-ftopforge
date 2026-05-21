@@ -36,7 +36,30 @@ public final class HologramSubcommand {
         }
     }
 
-    private void handleSet(CommandSender s, String[] args)     { s.sendMessage(msg.get("hologram.usage")); }
+    private void handleSet(CommandSender s, String[] args) {
+        if (!(s instanceof org.bukkit.entity.Player)) {
+            s.sendMessage(msg.get("hologram.set-no-player"));
+            return;
+        }
+        org.bukkit.entity.Player p = (org.bukkit.entity.Player) s;
+        org.bukkit.Location loc = p.getLocation();
+        String wname = loc.getWorld().getName();
+        boolean wasFirstBackup = !new java.io.File(plugin.getDataFolder(), "config.yml.bak").exists();
+        boolean ok = writer.writeLocation(wname, loc.getX(), loc.getY(), loc.getZ());
+        if (!ok) {
+            s.sendMessage(msg.get("hologram.config-write-failed"));
+            return;
+        }
+        if (wasFirstBackup) s.sendMessage(msg.get("hologram.config-backup"));
+        plugin.shutdownHolograms();
+        plugin.bootstrapHolograms();
+        if (plugin.holograms() == null) s.sendMessage(msg.get("hologram.set-no-engine"));
+        s.sendMessage(msg.get("hologram.set-success",
+            "world", wname,
+            "x", String.format(java.util.Locale.US, "%.1f", loc.getX()),
+            "y", String.format(java.util.Locale.US, "%.1f", loc.getY()),
+            "z", String.format(java.util.Locale.US, "%.1f", loc.getZ())));
+    }
     private void handleMove(CommandSender s, String[] args)    { s.sendMessage(msg.get("hologram.usage")); }
     private void handleInfo(CommandSender s, String[] args) {
         org.bukkit.configuration.file.FileConfiguration cfg = plugin.getConfig();
