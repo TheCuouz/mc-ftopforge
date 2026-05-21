@@ -5,16 +5,35 @@ All notable changes to FTopForge are documented here.
 ## [1.2.3] - 2026-05-21 — Hologram in-game commands + reload rebuild
 
 ### Added
-- (to be filled when implementation done)
+- **`/ftopforge hologram` subcommand tree** (perm `ftopforge.admin`):
+  - `set` — sets the hologram to where the player is standing. Mutates `config.yml > holograms.location` and respawns the live hologram (no restart).
+  - `move <world> <x> <y> <z>` — explicit coordinates. Validates that the world is loaded; rejects non-numeric coords.
+  - `info` — prints current engine, location, enabled state, refresh interval, template line count.
+  - `tp` — teleports the player to the live hologram location.
+  - `disable` / `enable` — flips `holograms.enabled` in `config.yml` and respawns / removes the live hologram.
+  - `refresh` — forces an immediate `engine.update(renderLines())` without waiting for the timer.
+- **Defensive backup:** first hologram mutate per server process copies `config.yml` → `data/config.yml.bak`. Subsequent mutates never overwrite that snapshot.
+- **Tab completion** across `/ftopforge` and `/ftop`:
+  - Top-level subcommands filtered by `ftopforge.admin`.
+  - `hologram` subcommands.
+  - `move <TAB>` lists loaded world names.
+  - `rewards`/`history`/`forensics` second-arg suggestions.
+- New messages keys under `hologram.*` in `messages-es.yml` + `messages-en.yml` (set-success / move-bad-world / info-line-* / etc.).
+- New tests: `HologramServiceAccessorsTest`, `HologramConfigWriterTest`, `HologramSubcommandParsingTest`, `HologramTabCompletionTest`. Total **167 tests**, 0 failures.
 
 ### Changed
-- (to be filled)
+- **`/ftopforge reload`** now also calls `shutdownHolograms() + bootstrapHolograms()`. Changes to `holograms.{enabled,engine,format,refresh-interval-seconds,location.*}` take effect live without server restart.
+- `FTopForgePlugin.onEnable` hologram bootstrap block extracted to `bootstrapHolograms()` + companion `shutdownHolograms()`. Same path is reused by the reload flow and by every hologram subcommand mutate.
+- `HologramService` gained `currentLocation()`, `isRunning()`, `forceRefresh()` accessors. Existing fields remain `final` — no live mutators; the shutdown+bootstrap pattern is the single change vector.
+- `plugin.yml` usage line + `FTopForgeCommand` default usage updated to include `hologram` in the menu.
 
-### Fixed
-- (to be filled)
+### Notes
+- Hologram model remains **singleton** (`ftopforge-top` DH name). Multi-instance (named holograms) is a candidate for v1.3.0; the new accessors and the shutdown+bootstrap pattern are the building blocks a multi refactor would reuse.
+- Paper 1.18+ preserves YAML comments on `saveConfig()` (`parseComments=true` default). The shipped richer schema's es-language comments survive `set`/`move`/`disable`/`enable` mutates without extra wiring. The `.bak` is the recovery path if a server fork ever breaks this assumption.
+- `set` from console: rejected with `hologram.set-no-player`. `tp` from console: rejected with `hologram.tp-no-player`. `move` works from both.
 
 ### Deploy
-- (to be filled)
+- Tiamat session 16. Backup `_migracion/backups/2026-05-21_FACTIONS_pre_session16/`. Deploy via `tiamat-deployer` subagent.
 
 ## [1.2.2] - 2026-05-20 — Config polish + items.yml key fix + bStats registered
 
