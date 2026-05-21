@@ -9,6 +9,8 @@ import com.cristian.ftopforge.history.AsciiChart;
 import com.cristian.ftopforge.history.CsvExporter;
 import com.cristian.ftopforge.history.HistoryDao;
 import com.cristian.ftopforge.history.HistoryPoint;
+import com.cristian.ftopforge.commands.hologram.HologramConfigWriter;
+import com.cristian.ftopforge.commands.hologram.HologramSubcommand;
 import com.cristian.ftopforge.i18n.Messages;
 import com.cristian.ftopforge.rewards.CronScheduler;
 import com.cristian.ftopforge.rewards.PayoutRunner;
@@ -40,11 +42,17 @@ public class FTopForgeCommand implements CommandExecutor {
     private final FTopForgePlugin plugin;
     private final RecalcRunner runner;
     private final Messages msg;
+    private final HologramSubcommand hologramSub;
 
     public FTopForgeCommand(FTopForgePlugin plugin, RecalcRunner runner, Messages msg) {
         this.plugin = plugin;
         this.runner = runner;
         this.msg = msg;
+        HologramConfigWriter writer = new HologramConfigWriter(
+            plugin.getConfig(),
+            new java.io.File(plugin.getDataFolder(), "config.yml"),
+            plugin.getDataFolder());
+        this.hologramSub = new HologramSubcommand(plugin, msg, writer);
     }
 
     @Override
@@ -71,6 +79,8 @@ public class FTopForgeCommand implements CommandExecutor {
                 if (!sender.hasPermission("ftopforge.admin")) { sender.sendMessage(msg.get("errors.no-permission")); return true; }
                 plugin.reloadConfig();
                 plugin.reloadMessages();
+                plugin.shutdownHolograms();
+                plugin.bootstrapHolograms();
                 sender.sendMessage(msg.get("admin.reloaded"));
                 return true;
             case "worth":
@@ -83,6 +93,10 @@ public class FTopForgeCommand implements CommandExecutor {
                 return handleForensics(sender, args);
             case "rewards":
                 return handleRewards(sender, args);
+            case "hologram":
+                if (!sender.hasPermission("ftopforge.admin")) { sender.sendMessage(msg.get("errors.no-permission")); return true; }
+                hologramSub.handle(sender, args);
+                return true;
             default:
                 sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Unknown subcommand: " + sub));
                 return true;
