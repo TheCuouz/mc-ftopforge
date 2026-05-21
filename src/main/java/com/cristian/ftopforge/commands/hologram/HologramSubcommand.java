@@ -126,8 +126,33 @@ public final class HologramSubcommand {
             if (!enabled) s.sendMessage(msg.get("hologram.info-disabled"));
         }
     }
-    private void handleTp(CommandSender s, String[] args)      { s.sendMessage(msg.get("hologram.usage")); }
+    private void handleTp(CommandSender s, String[] args) {
+        if (!(s instanceof org.bukkit.entity.Player)) {
+            s.sendMessage(msg.get("hologram.tp-no-player"));
+            return;
+        }
+        com.cristian.ftopforge.holograms.HologramService svc = plugin.holograms();
+        if (svc == null || !svc.isRunning()) {
+            s.sendMessage(msg.get("hologram.tp-no-engine"));
+            return;
+        }
+        org.bukkit.Location loc = svc.currentLocation();
+        if (loc == null) {
+            s.sendMessage(msg.get("hologram.tp-no-engine"));
+            return;
+        }
+        ((org.bukkit.entity.Player) s).teleport(loc);
+        s.sendMessage(msg.get("hologram.tp-success"));
+    }
     private void handleDisable(CommandSender s, String[] args) { s.sendMessage(msg.get("hologram.usage")); }
     private void handleEnable(CommandSender s, String[] args)  { s.sendMessage(msg.get("hologram.usage")); }
-    private void handleRefresh(CommandSender s, String[] args) { s.sendMessage(msg.get("hologram.usage")); }
+    private void handleRefresh(CommandSender s, String[] args) {
+        com.cristian.ftopforge.holograms.HologramService svc = plugin.holograms();
+        if (svc == null || !svc.isRunning()) {
+            s.sendMessage(msg.get("hologram.refresh-not-running"));
+            return;
+        }
+        svc.forceRefresh();
+        s.sendMessage(msg.get("hologram.refresh-success"));
+    }
 }
