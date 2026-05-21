@@ -300,50 +300,7 @@ public class FTopForgePlugin extends JavaPlugin {
         }
 
         // --- Holograms wiring ---
-        if (cfg.getBoolean("holograms.enabled", true)) {
-            try {
-                String engineCfg = cfg.getString("holograms.engine", "auto");
-                HologramEngine hEngine = HologramService.detect(engineCfg,
-                    name -> Bukkit.getPluginManager().isPluginEnabled(name), this, getLogger());
-                if (hEngine != null) {
-                    String wname = cfg.getString("holograms.location.world", "world");
-                    double hx = cfg.getDouble("holograms.location.x", 0d);
-                    double hy = cfg.getDouble("holograms.location.y", 80d);
-                    double hz = cfg.getDouble("holograms.location.z", 0d);
-                    Location loc = HologramService.resolveLocation(wname, hx, hy, hz, getLogger());
-                    if (loc != null) {
-                        List<String> template = cfg.getStringList("holograms.format");
-                        int refresh = cfg.getInt("holograms.refresh-interval-seconds", 60);
-                        final TopCache tc = this.topCache;
-                        final RecalcRunner rr = this.recalcRunner;
-                        java.util.function.Supplier<List<HologramLineFormatter.FactionLike>> topSupplier = () -> {
-                            List<FactionSnapshot> top = tc.top(10);
-                            List<HologramLineFormatter.FactionLike> out = new ArrayList<>(top.size());
-                            for (FactionSnapshot s : top) {
-                                out.add(new HologramLineFormatter.FactionLike() {
-                                    @Override public String name() { return s.factionName(); }
-                                    @Override public long totalValue() { return s.totalValue(); }
-                                    @Override public String leaderName() { return s.leaderName(); }
-                                });
-                            }
-                            return out;
-                        };
-                        java.util.function.LongSupplier nextRecalcSecs = () -> {
-                            long next = rr.nextScheduledAt();
-                            if (next <= 0) return -1L;
-                            return Math.max(0L, (next - System.currentTimeMillis()) / 1000L);
-                        };
-                        this.hologramService = new HologramService(this, hEngine, loc, template, refresh,
-                            topSupplier, nextRecalcSecs);
-                        hologramService.start();
-                        runtimeState.holoEngineName = "DH";
-                        getLogger().info("Holograms module ready (DH @ " + wname + " " + hx + "," + hy + "," + hz + ").");
-                    }
-                }
-            } catch (Throwable t) {
-                getLogger().log(Level.WARNING, "Holograms module init failed: " + t.getMessage(), t);
-            }
-        }
+        bootstrapHolograms();
 
         // --- Discord wiring ---
         if (cfg.getBoolean("discord.enabled", false)) {
@@ -550,4 +507,72 @@ public class FTopForgePlugin extends JavaPlugin {
     public int payoutHour() { return payoutHour; }
     public int payoutMinute() { return payoutMinute; }
     public TimeZone payoutTimeZone() { return payoutTz; }
+
+    public HologramService holograms() { return hologramService; }
+
+    /** Bootstrap the holograms module from current config. Idempotent: safe to call after shutdownHolograms. */
+    public void bootstrapHolograms() {
+        org.bukkit.configuration.file.FileConfiguration cfg = getConfig();
+        if (!cfg.getBoolean("holograms.enabled", true)) {
+            runtimeState.holoEngineName = null;
+            return;
+        }
+        try {
+            String engineCfg = cfg.getString("holograms.engine", "auto");
+            HologramEngine hEngine = HologramService.detect(engineCfg,
+                name -> Bukkit.getPluginManager().isPluginEnabled(name), this, getLogger());
+            if (hEngine == null) {
+                runtimeState.holoEngineName = null;
+                return;
+            }
+            String wname = cfg.getString("holograms.location.world", "world");
+            double hx = cfg.getDouble("holograms.location.x", 0d);
+            double hy = cfg.getDouble("holograms.location.y", 80d);
+            double hz = cfg.getDouble("holograms.location.z", 0d);
+            Location loc = HologramService.resolveLocation(wname, hx, hy, hz, getLogger());
+            if (loc == null) {
+                runtimeState.holoEngineName = null;
+                return;
+            }
+            List<String> template = cfg.getStringList("holograms.format");
+            int refresh = cfg.getInt("holograms.refresh-interval-seconds", 60);
+            final TopCache tc = this.topCache;
+            final RecalcRunner rr = this.recalcRunner;
+            java.util.function.Supplier<List<HologramLineFormatter.FactionLike>> topSupplier = () -> {
+                List<FactionSnapshot> top = tc.top(10);
+                List<HologramLineFormatter.FactionLike> out = new ArrayList<>(top.size());
+                for (FactionSnapshot s : top) {
+                    out.add(new HologramLineFormatter.FactionLike() {
+                        @Override public String name() { return s.factionName(); }
+                        @Override public long totalValue() { return s.totalValue(); }
+                        @Override public String leaderName() { return s.leaderName(); }
+                    });
+                }
+                return out;
+            };
+            java.util.function.LongSupplier nextRecalcSecs = () -> {
+                long next = rr.nextScheduledAt();
+                if (next <= 0) return -1L;
+                return Math.max(0L, (next - System.currentTimeMillis()) / 1000L);
+            };
+            this.hologramService = new HologramService(this, hEngine, loc, template, refresh,
+                topSupplier, nextRecalcSecs);
+            hologramService.start();
+            runtimeState.holoEngineName = "DH";
+            getLogger().info("Holograms module ready (DH @ " + wname + " " + hx + "," + hy + "," + hz + ").");
+        } catch (Throwable t) {
+            getLogger().log(Level.WARNING, "Holograms module init failed: " + t.getMessage(), t);
+            this.hologramService = null;
+            runtimeState.holoEngineName = null;
+        }
+    }
+
+    /** Stop the hologram service and null the field. Idempotent. */
+    public void shutdownHolograms() {
+        if (hologramService != null) {
+            try { hologramService.stop(); } catch (Throwable ignored) {}
+            hologramService = null;
+        }
+        runtimeState.holoEngineName = null;
+    }
 }
