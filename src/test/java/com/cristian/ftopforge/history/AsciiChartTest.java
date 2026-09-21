@@ -17,7 +17,7 @@ class AsciiChartTest {
     @Test
     void emptySeries_returnsEmptyMessage() {
         List<String> out = AsciiChart.render("Dragones", Collections.emptyList(), 4);
-        assertTrue(out.stream().anyMatch(s -> s.contains("Sin historia")));
+        assertTrue(out.stream().anyMatch(s -> s.contains("No history")));
     }
 
     @Test

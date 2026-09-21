@@ -15,7 +15,7 @@ public final class AsciiChart {
     public static List<String> render(String factionName, List<HistoryPoint> points, int weeks) {
         List<String> out = new ArrayList<>();
         if (points == null || points.isEmpty()) {
-            out.add("&7Sin historia para mostrar para &b" + factionName + "&7.");
+            out.add("&7No history to show for &b" + factionName + "&7.");
             return out;
         }
         // Header

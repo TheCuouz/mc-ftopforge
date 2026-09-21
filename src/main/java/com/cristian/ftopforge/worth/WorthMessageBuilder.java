@@ -19,7 +19,7 @@ public final class WorthMessageBuilder {
             "&7  - Total: &6&l$" + format(r.total)));
         if (r.notListed) {
             out.add(ChatColor.translateAlternateColorCodes('&',
-                "&c  - Sin precio configurado en items.yml"));
+                "&c  - No price set in items.yml"));
         }
         return out;
     }

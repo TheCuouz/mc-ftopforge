@@ -22,6 +22,6 @@ public final class MoneyFormat {
     }
 
     public static String fullFmt(long v) {
-        return String.format("%,d", v);
+        return String.format(java.util.Locale.ROOT, "%,d", v);
     }
 }

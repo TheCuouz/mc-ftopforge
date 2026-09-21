@@ -6,7 +6,7 @@
 
   <groupId>com.cristian</groupId>
   <artifactId>ftopforge</artifactId>
-  <version>1.2.3</version>
+  <version>1.2.4</version>
   <packaging>jar</packaging>
 
   <name>FTopForge</name>
@@ -43,6 +43,15 @@
       <artifactId>spigot-api</artifactId>
       <version>1.8.8-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
+      <!-- 21/9/2026: Spigot dejo de servir bungeecord-chat:1.8-SNAPSHOT y sin esto el repo
+           ya no compila. El codigo no usa ni una clase de net.md_5, y la dependencia es
+           provided (la pone el servidor), asi que excluirla no cambia el jar. -->
+      <exclusions>
+        <exclusion>
+          <groupId>net.md-5</groupId>
+          <artifactId>bungeecord-chat</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- FactionsUUID 1.6.9.5-U0.6.32 (confirmed by Task 1 against installed jar) via JitPack.
@@ -186,6 +195,21 @@
                   <artifact>*:*</artifact>
                   <excludes>
                     <exclude>META-INF/maven/**</exclude>
+                    <!-- Binarios de SQLite para plataformas en las que no corre un
+                         servidor de Paper. Eran 24 MB de los 20 del jar. Se
+                         conservan Linux/Windows x86_64 y aarch64, y los dos Mac
+                         para quien desarrolla en uno. -->
+                    <exclude>org/sqlite/native/Linux-Android/**</exclude>
+                    <exclude>org/sqlite/native/Linux-Musl/**</exclude>
+                    <exclude>org/sqlite/native/FreeBSD/**</exclude>
+                    <exclude>org/sqlite/native/Linux/arm/**</exclude>
+                    <exclude>org/sqlite/native/Linux/armv6/**</exclude>
+                    <exclude>org/sqlite/native/Linux/armv7/**</exclude>
+                    <exclude>org/sqlite/native/Linux/x86/**</exclude>
+                    <exclude>org/sqlite/native/Linux/ppc64/**</exclude>
+                    <exclude>org/sqlite/native/Linux/riscv64/**</exclude>
+                    <exclude>org/sqlite/native/Windows/x86/**</exclude>
+                    <exclude>org/sqlite/native/Windows/armv7/**</exclude>
                     <exclude>META-INF/services/java.sql.Driver</exclude>
                     <exclude>META-INF/*.SF</exclude>
                     <exclude>META-INF/*.DSA</exclude>

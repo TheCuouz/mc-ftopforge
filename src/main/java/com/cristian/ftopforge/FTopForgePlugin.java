@@ -108,7 +108,7 @@ public class FTopForgePlugin extends JavaPlugin {
         saveResource("messages-en.yml", false);
 
         FileConfiguration cfg = getConfig();
-        String lang = cfg.getString("language", "es");
+        String lang = cfg.getString("language", "en");
         String storageType = cfg.getString("storage.type", "sqlite");
 
         this.messages = MessagesLoader.load(this, lang);
@@ -293,7 +293,7 @@ public class FTopForgePlugin extends JavaPlugin {
                 }
                 scheduleNextPayout(now);
                 runtimeState.rewardsEnabled = true;
-                getLogger().info("Rewards module ready (" + dowName + " " + payoutHour + ":" + String.format("%02d", payoutMinute) + " " + payoutTz.getID() + ", ranks=" + rankCommands.size() + ").");
+                getLogger().info("Rewards module ready (" + dowName + " " + payoutHour + ":" + String.format(java.util.Locale.ROOT, "%02d", payoutMinute) + " " + payoutTz.getID() + ", ranks=" + rankCommands.size() + ").");
             } catch (Throwable t) {
                 getLogger().log(Level.WARNING, "Rewards module init failed: " + t.getMessage(), t);
             }
@@ -493,7 +493,7 @@ public class FTopForgePlugin extends JavaPlugin {
     }
 
     public void reloadMessages() {
-        String lang = getConfig().getString("language", "es");
+        String lang = getConfig().getString("language", "en");
         this.messages = MessagesLoader.load(this, lang);
     }
 

@@ -35,6 +35,14 @@ All notable changes to FTopForge are documented here.
 ### Deploy
 - Tiamat session 16. Backup `_migracion/backups/2026-05-21_FACTIONS_pre_session16/`. Deploy via `tiamat-deployer` subagent.
 
+## [1.2.4] — 2026-09-21
+
+### Fixed
+- **Numbers no longer follow the server's system language.** `String.format` was used
+  without a `Locale`, so the very same jar printed `$12.50` on an English machine and
+  `$12,50` on a Spanish or French one, and the thousands separator flipped with it. Every
+  player-facing number is written with `Locale.ROOT` now, and a test keeps it that way.
+
 ## [1.2.2] - 2026-05-20 — Config polish + items.yml key fix + bStats registered
 
 ### Fixed
